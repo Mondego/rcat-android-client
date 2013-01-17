@@ -27,7 +27,7 @@ public class RcatClientActivity extends Activity
 
     private void startWebSocketConnection() {
 
-        final String wsuri = "ws://10.0.2.2:9998";
+        final String wsuri = "ws://10.0.2.2:9998/echo";
 
         try {
             mConnection.connect(wsuri, new WebSocketHandler() {
