@@ -4,10 +4,15 @@
               android:layout_width="fill_parent"
               android:layout_height="fill_parent"
         >
+    <Button
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:text="Connect to Server"
+            android:id="@+id/button_ws_connect" android:onClick="onConnectToRcatServer"/>
     <TextView
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:text="Hello World, RcatClientActivity"
-            />
+            android:text="Initialized application."
+            android:id="@+id/ws_status_text"/>
 </LinearLayout>
 
