@@ -1,6 +1,7 @@
 package com.bravelittlescientist.rcat;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -13,9 +14,6 @@ public class RcatClientActivity extends Activity
 {
 
     private static final String TAG = "RcatClientActivity";
-
-    /** RCAT Variables **/
-
 
     /** Autobahn WebSocket initializations **/
     private final WebSocketConnection mConnection = new WebSocketConnection();
@@ -65,6 +63,11 @@ public class RcatClientActivity extends Activity
 
     public void onConnectToRcatServer(View view) {
         startWebSocketConnection();
+    }
+
+    public void onConnectRunJigsawBot(View view) {
+        Intent intent = new Intent(RcatClientActivity.this, RcatJigsawBotActivity.class);
+        startActivity(intent);
     }
 
 }

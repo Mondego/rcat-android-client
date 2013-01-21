@@ -7,8 +7,13 @@
     <Button
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:text="Connect to Server"
+            android:text="Connect to Server - Test"
             android:id="@+id/button_ws_connect" android:onClick="onConnectToRcatServer"/>
+    <Button
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:text="Connect and Run Jigsaw Bot"
+            android:id="@+id/run_jigsaw_bot_button" android:onClick="onConnectRunJigsawBot"/>
     <TextView
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
