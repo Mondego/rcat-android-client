@@ -14,6 +14,7 @@ import android.widget.LinearLayout;
 public class RcatJigsawBotActivity extends Activity {
 
     private JigsawBot rcatBot;
+    private static final String TAG = "RcatJigsawBotActivity";
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -24,4 +25,5 @@ public class RcatJigsawBotActivity extends Activity {
         LinearLayout layout = (LinearLayout)findViewById(R.id.jigsaw_bot_layout);
         layout.addView(img);
     }
+
 }
