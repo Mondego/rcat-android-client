@@ -14,6 +14,9 @@ public class RcatClientActivity extends Activity
 
     private static final String TAG = "RcatClientActivity";
 
+    /** RCAT Variables **/
+
+
     /** Autobahn WebSocket initializations **/
     private final WebSocketConnection mConnection = new WebSocketConnection();
 
@@ -27,7 +30,7 @@ public class RcatClientActivity extends Activity
 
     private void startWebSocketConnection() {
 
-        final String wsuri = "ws://10.0.2.2:9998/echo";
+        final String wsuri = "ws://10.0.2.2:8888/client";
 
         try {
             mConnection.connect(wsuri, new WebSocketHandler() {
