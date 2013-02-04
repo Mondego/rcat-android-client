@@ -84,6 +84,7 @@ public class RcatJigsawBotActivity extends Activity {
         // TODO: Replace image initialization with bot config call
         ImageView img = new ImageView(RcatJigsawBotActivity.this);
         img.setImageResource(R.drawable.diablo_1mb);
+        img.setTag("puzzleContainer");
         LinearLayout layout = (LinearLayout)findViewById(R.id.jigsaw_bot_layout);
         layout.addView(img);
     }
