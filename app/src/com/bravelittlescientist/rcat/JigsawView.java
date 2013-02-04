@@ -1,7 +1,9 @@
 package com.bravelittlescientist.rcat;
 
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.Canvas;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
@@ -16,12 +18,14 @@ public class JigsawView extends SurfaceView implements
         SurfaceHolder.Callback {
 
     private GameLoopThread gameThread;
+    private static final String TAG = JigsawView.class.getSimpleName();
+
 
     public JigsawView(Context context) {
         super(context);
         getHolder().addCallback(this);
 
-        gameThread = new GameLoopThread();
+        gameThread = new GameLoopThread(getHolder(), this);
 
         setFocusable(true);
     }
@@ -58,6 +62,14 @@ public class JigsawView extends SurfaceView implements
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
+        if (event.getAction() == MotionEvent.ACTION_DOWN) {
+            if (event.getY() > getHeight() - 50) {
+                gameThread.setRunning(false);
+                ((Activity)getContext()).finish();
+            } else {
+                Log.d(TAG, "Coordinates: x=" + event.getX() + ",y=" + event.getY());
+            }
+        }
         return super.onTouchEvent(event);
     }
 

@@ -1,5 +1,8 @@
 package com.bravelittlescientist.rcat;
 
+import android.util.Log;
+import android.view.SurfaceHolder;
+
 /**
  * Created with IntelliJ IDEA.
  * User: Eugenia Gabrielova <genia.likes.science@gmail.com>
@@ -9,6 +12,14 @@ package com.bravelittlescientist.rcat;
 public class GameLoopThread extends Thread {
 
     private boolean running;
+    private SurfaceHolder surfaceHolder;
+    private JigsawView jigsaw;
+    private static final String TAG = GameLoopThread.class.getSimpleName();
+
+    public GameLoopThread (SurfaceHolder sH, JigsawView jV) {
+        this.surfaceHolder = sH;
+        this.jigsaw = jV;
+    }
 
     public void setRunning(boolean running) {
         this.running = running;
@@ -17,8 +28,19 @@ public class GameLoopThread extends Thread {
     @Override
     public void run() {
         while (running) {
-            // update game state
-            // render state to the screen
+
+            long tick = 0L;
+            Log.d(TAG, "Begin game loop.");
+            while (running) {
+                tick++;
+
+                // update game state
+                // render state to the screen
+
+            }
+
+            Log.d(TAG, "Game loop executed " + tick + " times");
+
         }
     }
 }

@@ -3,6 +3,8 @@ package com.bravelittlescientist.rcat;
 import android.app.Activity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -20,7 +22,7 @@ import org.json.JSONObject;
 public class RcatJigsawBotActivity extends Activity {
 
     private JigsawBot rcatBot = new JigsawBot();
-    private static final String TAG = "RcatJigsawBotActivity";
+    private static final String TAG = RcatJigsawBotActivity.class.getSimpleName();
     private final String wsuri = "ws://10.0.2.2:8888/client";
 
     /** Autobahn WebSocket initializations **/
@@ -56,10 +58,28 @@ public class RcatJigsawBotActivity extends Activity {
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.jigsaw_layout);
 
+        // Full screen Jigsaw Surface View
+        requestWindowFeature(Window.FEATURE_NO_TITLE);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        setContentView(new JigsawView(this));
+
+        // Connection to RCAT Server
         startJigsawWebsocketConnection();
     }
+
+    @Override
+    protected void onDestroy() {
+        Log.d(TAG, "Destroying...");
+        super.onDestroy();
+    }
+
+    @Override
+    protected void onStop() {
+        Log.d(TAG, "Stopping...");
+        super.onStop();
+    }
+
 
     public void parseJigsawConfigurationPayload(String message) {
 
@@ -82,10 +102,10 @@ public class RcatJigsawBotActivity extends Activity {
 
     public void launchBot() {
         // TODO: Replace image initialization with bot config call
-        ImageView img = new ImageView(RcatJigsawBotActivity.this);
-        img.setImageResource(R.drawable.diablo_1mb);
-        img.setTag("puzzleContainer");
-        LinearLayout layout = (LinearLayout)findViewById(R.id.jigsaw_bot_layout);
-        layout.addView(img);
+        //ImageView img = new ImageView(RcatJigsawBotActivity.this);
+        //img.setImageResource(R.drawable.diablo_1mb);
+        //img.setTag("puzzleContainer");
+        //LinearLayout layout = (LinearLayout)findViewById(R.id.jigsaw_bot_layout);
+        //layout.addView(img);
     }
 }
