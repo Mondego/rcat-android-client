@@ -11,12 +11,12 @@ import java.util.Random;
  * Date: 1/20/13
  * Time: 8:36 PM
  */
-public class JigsawBot {
+public class RcatJigsawConfig {
 
     /**
      * This class is designed to play the RCAT jigsaw puzzle as a bot.
      */
-    private static final String TAG = "RcatJigsawBot";
+    private static final String TAG = "RcatJigsawConfig";
 
     /** Game Configuration **/
     private JSONObject grid;
@@ -29,7 +29,7 @@ public class JigsawBot {
 
     private boolean running = false;
 
-    public JigsawBot() {
+    public RcatJigsawConfig() {
         // TODO possibly initialize configuration here instead TBD error checking
     }
 

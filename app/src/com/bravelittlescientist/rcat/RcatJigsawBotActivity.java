@@ -4,10 +4,6 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
-import android.view.Window;
-import android.view.WindowManager;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 import de.tavendo.autobahn.WebSocketConnection;
 import de.tavendo.autobahn.WebSocketException;
@@ -22,7 +18,7 @@ import org.json.JSONObject;
  */
 public class RcatJigsawBotActivity extends Activity {
 
-    private JigsawBot rcatBot = new JigsawBot();
+    private RcatJigsawConfig rcatBot = new RcatJigsawConfig();
     private static final String TAG = RcatJigsawBotActivity.class.getSimpleName();
     private final String wsuri = "ws://10.0.2.2:8888/client";
 
