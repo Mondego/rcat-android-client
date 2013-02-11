@@ -3,6 +3,7 @@ package com.bravelittlescientist.rcat;
 import android.app.Activity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ImageView;
@@ -25,6 +26,10 @@ public class RcatJigsawBotActivity extends Activity {
     private static final String TAG = RcatJigsawBotActivity.class.getSimpleName();
     private final String wsuri = "ws://10.0.2.2:8888/client";
 
+    private GameLoopThread mGameThread;
+    private JigsawView mJigsawView;
+    private boolean running;
+
     /** Autobahn WebSocket initializations **/
     private final WebSocketConnection botConnection = new WebSocketConnection();
 
@@ -36,13 +41,38 @@ public class RcatJigsawBotActivity extends Activity {
                 @Override
                 public void onOpen() {
                     Log.d(TAG, "Status: Connected to " + wsuri);
-                    botConnection.sendTextMessage("Hello, world!");
                 }
 
                 @Override
                 public void onTextMessage(String payload) {
+
                     Log.d(TAG, "Got echo: " + payload);
-                    parseJigsawConfigurationPayload(payload);
+                    // Initial state
+                    if (!running) {
+                        try {
+                            JSONObject msgContents = new JSONObject(payload);
+
+                            if (msgContents.has("c")) {
+                                //rcatBot.configure(msgContents.getJSONObject("c"));
+                                TextView t = (TextView) findViewById(R.id.gameText);
+                                t.setText("Found C");
+                            }
+                            else {
+                                Log.d(TAG, "Error: No jigsaw configuration received");
+                                TextView t = (TextView) findViewById(R.id.gameText);
+                                t.setText("No C Found");
+                            }
+                        }
+                        catch (Exception e) {
+                            Log.d(TAG, e.toString());
+                        }
+
+
+
+                    } else {
+
+                    }
+
                 }
 
                 @Override
@@ -59,13 +89,36 @@ public class RcatJigsawBotActivity extends Activity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        // Full screen Jigsaw Surface View
-        requestWindowFeature(Window.FEATURE_NO_TITLE);
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
-        setContentView(new JigsawView(this));
+        setContentView(R.layout.puzzle_layout);
+
+        mJigsawView = (JigsawView) findViewById(R.id.jigsaw);
+        mGameThread = mJigsawView.getThread();
+        mJigsawView.setTextView((TextView) findViewById(R.id.gameText));
+        running = false;
 
         // Connection to RCAT Server
         startJigsawWebsocketConnection();
+
+        if (savedInstanceState == null) {
+            // we were just launched: set up a new game
+            mGameThread.setState(GameLoopThread.STATE_READY);
+            Log.w(this.getClass().getName(), "SIS is null");
+        } else {
+            // we are being restored: resume a previous game
+            mGameThread.restoreState(savedInstanceState);
+            Log.w(this.getClass().getName(), "SIS is nonnull");
+        }
+
+        // Full screen Jigsaw Surface View
+        //requestWindowFeature(Window.FEATURE_NO_TITLE);
+        //getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        //setContentView(new JigsawView(this));
+
+    }
+
+    public boolean onCreateOptionsMenu(Menu menu) {
+        super.onCreateOptionsMenu(menu);
+        return true;
     }
 
     @Override
@@ -80,32 +133,18 @@ public class RcatJigsawBotActivity extends Activity {
         super.onStop();
     }
 
-
-    public void parseJigsawConfigurationPayload(String message) {
-
-        try {
-            JSONObject msgContents = new JSONObject(message);
-
-            if (msgContents.has("c")) {
-                rcatBot.configure(msgContents.getJSONObject("c"));
-                launchBot();
-            }
-            else {
-                Log.d(TAG, "Error: No jigsaw configuration received"); // TODO: Determine appropriate fail action.
-            }
-        }
-        catch (Exception e) {
-            Log.d(TAG, e.toString());
-        }
-
+    @Override
+    protected void onPause() {
+        super.onPause();
+        mJigsawView.getThread().pause(); // pause game when Activity pauses
     }
 
-    public void launchBot() {
-        // TODO: Replace image initialization with bot config call
-        //ImageView img = new ImageView(RcatJigsawBotActivity.this);
-        //img.setImageResource(R.drawable.diablo_1mb);
-        //img.setTag("puzzleContainer");
-        //LinearLayout layout = (LinearLayout)findViewById(R.id.jigsaw_bot_layout);
-        //layout.addView(img);
+    protected void onSaveInstanceState(Bundle outState) {
+        // just have the View's thread save its state into our Bundle
+        super.onSaveInstanceState(outState);
+        mGameThread.saveState(outState);
+        Log.w(this.getClass().getName(), "SIS called");
     }
+
+
 }

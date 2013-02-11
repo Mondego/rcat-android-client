@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">rcat-android</string>
+    <string name="jigsaw_game_text_text">Jigsaw Game Text Placeholder</string>
 </resources>
