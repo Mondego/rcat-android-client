@@ -1,5 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 
+<ScrollView
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent" android:background="@drawable/wood">
 <FrameLayout
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
@@ -8,11 +12,13 @@
     <com.bravelittlescientist.rcat.JigsawView
             android:id="@+id/jigsaw"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
+            android:layout_height="match_parent"
+            />
 
     <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent" >
+            android:layout_height="match_parent"
+            android:id="@+id/relative">
         <TextView
                 android:id="@+id/gameText"
                 android:text="@string/jigsaw_game_text_text"
@@ -26,3 +32,4 @@
     </RelativeLayout>
 
 </FrameLayout>
+</ScrollView>

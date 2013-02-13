@@ -1,6 +1,12 @@
 package com.bravelittlescientist.rcat;
 
+import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.util.Log;
+import android.widget.FrameLayout;
+import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import org.json.JSONException;
 import org.json.JSONObject;
 import java.util.Random;
@@ -14,7 +20,7 @@ import java.util.Random;
 public class RcatJigsawConfig {
 
     /**
-     * This class is designed to play the RCAT jigsaw puzzle as a bot.
+     * This class is designed to manage the input configuration of an RCAT Jigsaw puzzle.
      */
     private static final String TAG = "RcatJigsawConfig";
 
@@ -27,10 +33,12 @@ public class RcatJigsawConfig {
     private String myId;
     private String imgUrl;
 
+    private Context cfgContext;
+
     private boolean running = false;
 
-    public RcatJigsawConfig() {
-        // TODO possibly initialize configuration here instead TBD error checking
+    public RcatJigsawConfig(Context c) {
+        cfgContext = c;
     }
 
     public void configure(JSONObject config) {
@@ -43,14 +51,76 @@ public class RcatJigsawConfig {
             pieces = config.getJSONObject("pieces");
             myId = config.getString("myid");
             imgUrl = config.getJSONObject("img").getString("img_url");
-
         }
-
 
         catch (JSONException je) {
             Log.d(TAG, je.toString());
         }
     }
+
+    /** Getters **/
+    /**
+     * getGrid
+     * @return grid, JSON Object
+     * grid["nrows"]    number of puzzle rows
+     * grid["ncols"]    number of puzzle columns
+     * grid["cellw"]    cell dimensions, width
+     * grid["cellh"]    cell dimensions, height
+     * grid["y"]        ???
+     * grid["x"]        ???
+     */
+    public JSONObject getGrid() {
+        return grid;
+    }
+
+    /**
+     * getBoard
+     * @return board, JSON Object
+     * board["w"]           width of gameplay board
+     * board["h"]           height of gameplay board
+     * board["maxScale"]    maximum scale of board
+     * board["minscale"]    minimum scale of board
+     */
+    public JSONObject getBoard() {
+        return board;
+    }
+
+    /**
+     * getImgSet
+     * @return imgSet, JSON Object
+     * imgSet["img_url"]    URL of puzzle image
+     * imgSet["img_w"]      Height of puzzle image
+     * imgset["img_h"]      Width of puzzle image
+     */
+    public JSONObject getImgSet () {
+        return imgSet;
+    }
+
+    /**
+     * getMyId
+     * @return myId, String
+     */
+    public String getMyId () {
+        return myId;
+    }
+
+    /**
+     * getImgUrl
+     * @return imgUrl, String
+     */
+    public String getImgUrl () {
+        return imgUrl;
+    }
+
+    /**
+     * getPieces
+     * @return pieces, JSON Object
+     *
+     */
+    public JSONObject getPieces () {
+        return pieces;
+    }
+
 
     public void automateBot () {
         int x = 0;
