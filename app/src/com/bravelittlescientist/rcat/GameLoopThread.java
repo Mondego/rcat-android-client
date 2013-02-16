@@ -38,6 +38,8 @@ public class GameLoopThread extends Thread {
     private int gCanvasWidth;
     private int gCanvasHeight;
 
+    private Paint paint;
+
     private static final String TAG = GameLoopThread.class.getSimpleName();
 
     /** Thread methods **/
@@ -50,6 +52,7 @@ public class GameLoopThread extends Thread {
 
         Resources res = gtContext.getResources();
         jigsawImage = gtContext.getResources().getDrawable(R.drawable.diablo_1mb);
+        paint = new Paint();
     }
 
     public void doStart() {

@@ -3,14 +3,16 @@ package com.bravelittlescientist.rcat;
 import android.app.Activity;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.util.Log;
 import android.view.Menu;
+import android.view.MotionEvent;
+import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.RelativeLayout;
-import android.widget.TextView;
-import android.widget.Toast;
+import android.widget.*;
 import de.tavendo.autobahn.WebSocketConnection;
 import de.tavendo.autobahn.WebSocketException;
 import de.tavendo.autobahn.WebSocketHandler;
@@ -27,7 +29,8 @@ import java.util.Iterator;
  * Date: 1/20/13
  * Time: 10:22 PM
  */
-public class RcatJigsawBotActivity extends Activity {
+public class RcatJigsawBotActivity extends Activity
+        implements View.OnTouchListener, View.OnClickListener {
 
     private RcatJigsawConfig puzzleConfig;
     private static final String TAG = RcatJigsawBotActivity.class.getSimpleName();
@@ -38,6 +41,12 @@ public class RcatJigsawBotActivity extends Activity {
     private boolean running;
 
     private HashMap<String, PuzzlePieceView> jigsawPieces;
+    private HashMap<String, TextView> jigsawPrototypePieces;
+
+    private SandboxView sandbox = null;
+    private boolean isFlagHidden = false;
+
+    private JigsawSurfaceView jSurfaceView;
 
     /** Autobahn WebSocket initializations **/
     private final WebSocketConnection botConnection = new WebSocketConnection();
@@ -45,11 +54,20 @@ public class RcatJigsawBotActivity extends Activity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        setContentView(R.layout.puzzle_layout);
+        jSurfaceView = new JigsawSurfaceView(this);
+        setContentView(jSurfaceView);
 
+        //setContentView(R.layout.sandbox_game_layout);
+        //sandbox = (SandboxView) findViewById(R.id.gameCanvas);
+        //sandbox.setOnTouchListener(this);
+
+        //Button b = (Button) findViewById(R.id.sandboxButton);
+        //b.setOnClickListener(this);
+
+        /*setContentView(R.layout.puzzle_layout);
         mJigsawView = (JigsawView) findViewById(R.id.jigsaw);
         mGameThread = mJigsawView.getThread();
-        mJigsawView.setTextView((TextView) findViewById(R.id.gameText));
+        mJigsawView.setTextView((TextView) findViewById(R.id.gameText));*/
 
         puzzleConfig = new RcatJigsawConfig(RcatJigsawBotActivity.this);
         running = false;
@@ -57,7 +75,7 @@ public class RcatJigsawBotActivity extends Activity {
         // Connection to RCAT Server
         startJigsawWebsocketConnection();
 
-        if (savedInstanceState == null) {
+        /*if (savedInstanceState == null) {
             // we were just launched: set up a new game
             mGameThread.setState(GameLoopThread.STATE_READY);
             Log.w(this.getClass().getName(), "SIS is null");
@@ -65,13 +83,7 @@ public class RcatJigsawBotActivity extends Activity {
             // we are being restored: resume a previous game
             mGameThread.restoreState(savedInstanceState);
             Log.w(this.getClass().getName(), "SIS is nonnull");
-        }
-
-        // Full screen Jigsaw Surface View
-        //requestWindowFeature(Window.FEATURE_NO_TITLE);
-        //getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
-        //setContentView(new JigsawView(this));
-
+        }*/
     }
 
     private void startJigsawWebsocketConnection() {
@@ -97,6 +109,7 @@ public class RcatJigsawBotActivity extends Activity {
                                 running = true;
                                 puzzleConfig.configure(msgContents.getJSONObject("c"));
                                 jigsawPieces = new HashMap<String, PuzzlePieceView>();
+                                jigsawPrototypePieces = new HashMap<String, TextView>();
                                 drawJigsawPuzzle();
                             }
                             else {
@@ -147,6 +160,10 @@ public class RcatJigsawBotActivity extends Activity {
         JSONObject grid = puzzleConfig.getGrid();
 
         Iterator<?> pIter = pieces.keys();
+        TextView prototypeT;
+        int counter = 1;
+
+
         while(pIter.hasNext()) {
             String pO = (String) pIter.next();
 
@@ -155,10 +172,10 @@ public class RcatJigsawBotActivity extends Activity {
                 // Get piece information
                 String pieceId = piece.getString("pid");
                 Boolean piecePlaced = piece.getBoolean("b");
-                Integer pieceTargetRow = pieces.getInt("r");
-                Integer pieceTargetCol = pieces.getInt("c");
-                Integer pieceRemoteXPos = pieces.getInt("x");
-                Integer pieceRemoteYPos = pieces.getInt("y");
+                Integer pieceTargetRow = piece.getInt("r");
+                Integer pieceTargetCol = piece.getInt("c");
+                Integer pieceRemoteXPos = piece.getInt("x");
+                Integer pieceRemoteYPos = piece.getInt("y");
 
                 // Create new custom ImageView from this puzzle piece
                 jigsawPieces.put(pieceId,
@@ -168,7 +185,20 @@ public class RcatJigsawBotActivity extends Activity {
                                 pieceRemoteYPos, pieceRemoteXPos)
                 );
 
+                prototypeT = new TextView(RcatJigsawBotActivity.this);
+                prototypeT.setHeight(100);
+                prototypeT.setWidth(100);
+                prototypeT.setText("[" + pieceTargetRow + "," + pieceTargetCol + "]");
+                jigsawPrototypePieces.put(pieceId,
+                        prototypeT);
+
+                if (counter != 1) {
+                    relativeParams.addRule(RelativeLayout.ABOVE, 1 );
+                }
+                counter++;
+                //rL.addView(prototypeT, relativeParams);
             } catch (JSONException e) {
+                Toast.makeText(RcatJigsawBotActivity.this, "Failed JSON", Toast.LENGTH_LONG);
                 Log.d(TAG, "JSON Exception parsing pieces");
             }
         }
@@ -224,15 +254,77 @@ public class RcatJigsawBotActivity extends Activity {
     @Override
     protected void onPause() {
         super.onPause();
-        mJigsawView.getThread().pause(); // pause game when Activity pauses
+        //mJigsawView.getThread().pause(); // pause game when Activity pauses
+        jSurfaceView.onPauseJigsawSurfaceView();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        jSurfaceView.onResumeJigsawSurfaceView();
     }
 
     protected void onSaveInstanceState(Bundle outState) {
         // just have the View's thread save its state into our Bundle
         super.onSaveInstanceState(outState);
-        mGameThread.saveState(outState);
+        //mGameThread.saveState(outState);
         Log.w(this.getClass().getName(), "SIS called");
     }
 
+    /** Touch/Click Events **/
+    @Override
+    public void onClick(View v) {
+        if (v.getId() == R.id.sandboxButton) {
 
+            TextView tv = (TextView) findViewById(R.id.sandboxTextView);
+            tv.setText("");
+            Button b = (Button) findViewById(R.id.sandboxButton);
+            isFlagHidden = !isFlagHidden;
+
+            if (isFlagHidden) {
+                b.setText("Give up!");
+                sandbox.hideTheFlag();
+            } else {
+                b.setText("Hide Flag");
+                sandbox.giveUp();
+            }
+        }
+    }
+
+    @Override
+    public boolean onTouch(View v, MotionEvent event) {
+        if (v.getId() == R.id.gameCanvas) {
+            if (event.getAction() == MotionEvent.ACTION_DOWN) {
+                if (isFlagHidden) {
+                    TextView tv = (TextView) findViewById(R.id.sandboxTextView);
+                    switch (sandbox.takeAGuess(event.getX(), event.getY())) {
+                        case BULLSEYE:
+                            Button b = (Button) findViewById(R.id.sandboxButton);
+                            isFlagHidden = false;
+                            b.setText("Hide Flag");
+                            tv.setText("Found it");
+                            tv.setTextColor(Color.GREEN);
+                            break;
+
+                        case HOT:
+                            tv.setText("Hot");
+                            tv.setTextColor(Color.RED);
+                            break;
+
+                        case WARM:
+                            tv.setText("Warmer");
+                            tv.setTextColor(Color.YELLOW);
+                            break;
+
+                        case COLD:
+                            tv.setText("Cold");
+                            tv.setTextColor(Color.BLUE);
+                            break;
+                    }
+                }
+            }
+            return true;
+        }
+        return false;
+    }
 }
