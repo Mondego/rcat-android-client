@@ -120,10 +120,10 @@ public class RcatJigsawBotActivity extends Activity {
 
     public void drawJigsawPuzzle() {
 
-        RelativeLayout rL = (RelativeLayout) findViewById(R.id.relative);
+        /*RelativeLayout rL = (RelativeLayout) findViewById(R.id.relative);
         RelativeLayout.LayoutParams relativeParams = new RelativeLayout.LayoutParams(
                 ViewGroup.LayoutParams.FILL_PARENT,
-                ViewGroup.LayoutParams.FILL_PARENT);
+                ViewGroup.LayoutParams.FILL_PARENT); */
 
         JSONObject pieces = puzzleConfig.getPieces();
         JSONObject board = puzzleConfig.getBoard();
