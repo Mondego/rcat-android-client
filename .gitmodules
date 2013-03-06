@@ -1,0 +1,3 @@
+[submodule "android-puzzle"]
+	path = android-puzzle
+	url = git@github.com:bravelittlescientist/android-jigsaw-puzzle.git
