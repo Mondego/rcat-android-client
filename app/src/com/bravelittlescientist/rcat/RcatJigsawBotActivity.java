@@ -114,8 +114,7 @@ public class RcatJigsawBotActivity extends Activity
                             }
                             else {
                                 Log.d(TAG, "Error: No jigsaw configuration received");
-                                TextView t = (TextView) findViewById(R.id.gameText);
-                                t.setText("No C Found");
+                                Toast.makeText(RcatJigsawBotActivity.this, "No Configuration Found", Toast.LENGTH_SHORT).show();
                             }
                         }
                         catch (Exception e) {
@@ -159,16 +158,20 @@ public class RcatJigsawBotActivity extends Activity
         JSONObject board = puzzleConfig.getBoard();
         JSONObject grid = puzzleConfig.getGrid();
 
+        // Create board + grid for puzzle
+
+
+        // Get Jigsaw Pieces
         Iterator<?> pIter = pieces.keys();
         TextView prototypeT;
         int counter = 1;
-
 
         while(pIter.hasNext()) {
             String pO = (String) pIter.next();
 
             try {
                 JSONObject piece = (JSONObject) pieces.get(pO);
+                Toast.makeText(RcatJigsawBotActivity.this, piece.toString(), Toast.LENGTH_SHORT).show();
                 // Get piece information
                 String pieceId = piece.getString("pid");
                 Boolean piecePlaced = piece.getBoolean("b");
@@ -185,18 +188,8 @@ public class RcatJigsawBotActivity extends Activity
                                 pieceRemoteYPos, pieceRemoteXPos)
                 );
 
-                prototypeT = new TextView(RcatJigsawBotActivity.this);
-                prototypeT.setHeight(100);
-                prototypeT.setWidth(100);
-                prototypeT.setText("[" + pieceTargetRow + "," + pieceTargetCol + "]");
-                jigsawPrototypePieces.put(pieceId,
-                        prototypeT);
+                //Toast.makeText(RcatJigsawBotActivity.this, pieceId + ": " + pieceTargetRow + ", " + pieceTargetCol, Toast.LENGTH_SHORT).show();
 
-                if (counter != 1) {
-                    relativeParams.addRule(RelativeLayout.ABOVE, 1 );
-                }
-                counter++;
-                //rL.addView(prototypeT, relativeParams);
             } catch (JSONException e) {
                 Toast.makeText(RcatJigsawBotActivity.this, "Failed JSON", Toast.LENGTH_LONG);
                 Log.d(TAG, "JSON Exception parsing pieces");
