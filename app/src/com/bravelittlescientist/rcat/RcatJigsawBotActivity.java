@@ -13,6 +13,9 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.*;
+import com.bravelittlescientist.android_puzzle_view.ExampleJigsawConfigurations;
+import com.bravelittlescientist.android_puzzle_view.JigsawPuzzle;
+import com.bravelittlescientist.android_puzzle_view.PuzzleCompactSurface;
 import de.tavendo.autobahn.WebSocketConnection;
 import de.tavendo.autobahn.WebSocketException;
 import de.tavendo.autobahn.WebSocketHandler;
@@ -23,24 +26,17 @@ import org.json.JSONObject;
 import java.util.HashMap;
 import java.util.Iterator;
 
-public class RcatJigsawBotActivity extends Activity
-        implements View.OnTouchListener, View.OnClickListener {
+public class RcatJigsawBotActivity extends Activity {
+
+    private PuzzleCompactSurface puzzleSurface;
 
     private RcatJigsawConfig puzzleConfig;
     private static final String TAG = RcatJigsawBotActivity.class.getSimpleName();
     private final String wsuri = "ws://10.0.2.2:8888/client";
 
-    private GameLoopThread mGameThread;
-    private JigsawView mJigsawView;
     private boolean running;
 
     private HashMap<String, PuzzlePieceView> jigsawPieces;
-    private HashMap<String, TextView> jigsawPrototypePieces;
-
-    private SandboxView sandbox = null;
-    private boolean isFlagHidden = false;
-
-    private JigsawSurfaceView jSurfaceView;
 
     /** Autobahn WebSocket initializations **/
     private final WebSocketConnection botConnection = new WebSocketConnection();
@@ -48,36 +44,17 @@ public class RcatJigsawBotActivity extends Activity
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        jSurfaceView = new JigsawSurfaceView(this);
-        setContentView(jSurfaceView);
-
-        //setContentView(R.layout.sandbox_game_layout);
-        //sandbox = (SandboxView) findViewById(R.id.gameCanvas);
-        //sandbox.setOnTouchListener(this);
-
-        //Button b = (Button) findViewById(R.id.sandboxButton);
-        //b.setOnClickListener(this);
-
-        /*setContentView(R.layout.puzzle_layout);
-        mJigsawView = (JigsawView) findViewById(R.id.jigsaw);
-        mGameThread = mJigsawView.getThread();
-        mJigsawView.setTextView((TextView) findViewById(R.id.gameText));*/
-
         puzzleConfig = new RcatJigsawConfig(RcatJigsawBotActivity.this);
-        running = false;
+        Bundle config = ExampleJigsawConfigurations.getRcatKittenExample(R.drawable.diablo_1mb);
 
+        puzzleSurface = new PuzzleCompactSurface(this);
+        JigsawPuzzle jigsawPuzzle = new JigsawPuzzle(this, config);
+        puzzleSurface.setPuzzle(jigsawPuzzle);
+
+        running = false;
+        setContentView(puzzleSurface);
         // Connection to RCAT Server
         startJigsawWebsocketConnection();
-
-        /*if (savedInstanceState == null) {
-            // we were just launched: set up a new game
-            mGameThread.setState(GameLoopThread.STATE_READY);
-            Log.w(this.getClass().getName(), "SIS is null");
-        } else {
-            // we are being restored: resume a previous game
-            mGameThread.restoreState(savedInstanceState);
-            Log.w(this.getClass().getName(), "SIS is nonnull");
-        }*/
     }
 
     private void startJigsawWebsocketConnection() {
@@ -103,12 +80,12 @@ public class RcatJigsawBotActivity extends Activity
                                 running = true;
                                 puzzleConfig.configure(msgContents.getJSONObject("c"));
                                 jigsawPieces = new HashMap<String, PuzzlePieceView>();
-                                jigsawPrototypePieces = new HashMap<String, TextView>();
-                                drawJigsawPuzzle();
+                                //jigsawPrototypePieces = new HashMap<String, TextView>();
+                                //drawJigsawPuzzle();
                             }
                             else {
                                 Log.d(TAG, "Error: No jigsaw configuration received");
-                                Toast.makeText(RcatJigsawBotActivity.this, "No Configuration Found", Toast.LENGTH_SHORT).show();
+                                //Toast.makeText(RcatJigsawBotActivity.this, "No Configuration Found", Toast.LENGTH_SHORT).show();
                             }
                         }
                         catch (Exception e) {
@@ -121,7 +98,7 @@ public class RcatJigsawBotActivity extends Activity
                         try {
                             JSONObject msgContents = new JSONObject(payload);
 
-                            Toast.makeText(RcatJigsawBotActivity.this, payload, Toast.LENGTH_LONG);
+                            //Toast.makeText(RcatJigsawBotActivity.this, payload, Toast.LENGTH_LONG);
 
                         } catch (Exception e) {
                             Log.d(TAG, e.toString());
@@ -165,7 +142,7 @@ public class RcatJigsawBotActivity extends Activity
 
             try {
                 JSONObject piece = (JSONObject) pieces.get(pO);
-                Toast.makeText(RcatJigsawBotActivity.this, piece.toString(), Toast.LENGTH_SHORT).show();
+                //Toast.makeText(RcatJigsawBotActivity.this, piece.toString(), Toast.LENGTH_SHORT).show();
                 // Get piece information
                 String pieceId = piece.getString("pid");
                 Boolean piecePlaced = piece.getBoolean("b");
@@ -185,40 +162,10 @@ public class RcatJigsawBotActivity extends Activity
                 //Toast.makeText(RcatJigsawBotActivity.this, pieceId + ": " + pieceTargetRow + ", " + pieceTargetCol, Toast.LENGTH_SHORT).show();
 
             } catch (JSONException e) {
-                Toast.makeText(RcatJigsawBotActivity.this, "Failed JSON", Toast.LENGTH_LONG);
+               // Toast.makeText(RcatJigsawBotActivity.this, "Failed JSON", Toast.LENGTH_LONG);
                 Log.d(TAG, "JSON Exception parsing pieces");
             }
         }
-
-        /*
-        ImageView i = new ImageView(RcatJigsawBotActivity.this);
-        i.setImageResource(R.drawable.diablo_1mb);
-        i.setId(?);
-        //rL.addView(i, relativeParams);
-
-        //Bitmap bMap = BitmapFactory.decodeResource(getResources(), R.drawable.diablo_1mb);
-        //Bitmap bMapScaled = Bitmap.createScaledBitmap(bMap, 240, 240, true);
-
-                                /*RelativeLayout.LayoutParams rParams =
-                                        new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT,
-                                                RelativeLayout.LayoutParams.WRAP_CONTENT);
-
-                                //
-                                //i.setImageBitmap(bMapScaled);
-                                //
-                                //
-
-
-                                rL.addView(t, rParams);
-        bitmapsArray[0] = Bitmap.createBitmap(bMapScaled, 0, 0, 80, 80);
-        bitmapsArray[1] = Bitmap.createBitmap(bMapScaled, 80, 0, 80, 80);
-        bitmapsArray[2] = Bitmap.createBitmap(bMapScaled, 160, 0, 80, 80);
-        bitmapsArray[3] = Bitmap.createBitmap(bMapScaled, 0, 80, 80, 80);
-        bitmapsArray[4] = Bitmap.createBitmap(bMapScaled, 80, 80, 80, 80);
-        bitmapsArray[5] = Bitmap.createBitmap(bMapScaled, 160, 80, 80, 80);
-        bitmapsArray[6] = Bitmap.createBitmap(bMapScaled, 0, 160, 80, 80);
-        bitmapsArray[7] = Bitmap.createBitmap(bMapScaled, 80, 160, 80, 80);
-        bitmapsArray[8] = Bitmap.createBitmap(bMapScaled, 160, 160, 80, 80);             */
     }
 
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -227,91 +174,14 @@ public class RcatJigsawBotActivity extends Activity
     }
 
     @Override
-    protected void onDestroy() {
-        Log.d(TAG, "Destroying...");
-        super.onDestroy();
-    }
-
-    @Override
-    protected void onStop() {
-        Log.d(TAG, "Stopping...");
-        super.onStop();
-    }
-
-    @Override
     protected void onPause() {
         super.onPause();
-        //mJigsawView.getThread().pause(); // pause game when Activity pauses
-        jSurfaceView.onPauseJigsawSurfaceView();
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        jSurfaceView.onResumeJigsawSurfaceView();
+        puzzleSurface.getThread().pause();
     }
 
     protected void onSaveInstanceState(Bundle outState) {
-        // just have the View's thread save its state into our Bundle
         super.onSaveInstanceState(outState);
-        //mGameThread.saveState(outState);
-        Log.w(this.getClass().getName(), "SIS called");
+        puzzleSurface.getThread().saveState(outState);
     }
 
-    /** Touch/Click Events **/
-    @Override
-    public void onClick(View v) {
-        if (v.getId() == R.id.sandboxButton) {
-
-            TextView tv = (TextView) findViewById(R.id.sandboxTextView);
-            tv.setText("");
-            Button b = (Button) findViewById(R.id.sandboxButton);
-            isFlagHidden = !isFlagHidden;
-
-            if (isFlagHidden) {
-                b.setText("Give up!");
-                sandbox.hideTheFlag();
-            } else {
-                b.setText("Hide Flag");
-                sandbox.giveUp();
-            }
-        }
-    }
-
-    @Override
-    public boolean onTouch(View v, MotionEvent event) {
-        if (v.getId() == R.id.gameCanvas) {
-            if (event.getAction() == MotionEvent.ACTION_DOWN) {
-                if (isFlagHidden) {
-                    TextView tv = (TextView) findViewById(R.id.sandboxTextView);
-                    switch (sandbox.takeAGuess(event.getX(), event.getY())) {
-                        case BULLSEYE:
-                            Button b = (Button) findViewById(R.id.sandboxButton);
-                            isFlagHidden = false;
-                            b.setText("Hide Flag");
-                            tv.setText("Found it");
-                            tv.setTextColor(Color.GREEN);
-                            break;
-
-                        case HOT:
-                            tv.setText("Hot");
-                            tv.setTextColor(Color.RED);
-                            break;
-
-                        case WARM:
-                            tv.setText("Warmer");
-                            tv.setTextColor(Color.YELLOW);
-                            break;
-
-                        case COLD:
-                            tv.setText("Cold");
-                            tv.setTextColor(Color.BLUE);
-                            break;
-                    }
-                }
-            }
-            return true;
-        }
-        return false;
-    }
 }
