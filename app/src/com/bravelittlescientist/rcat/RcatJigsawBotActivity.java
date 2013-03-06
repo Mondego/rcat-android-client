@@ -23,12 +23,6 @@ import org.json.JSONObject;
 import java.util.HashMap;
 import java.util.Iterator;
 
-/**
- * Created with IntelliJ IDEA.
- * User: Eugenia Gabrielova <genia.likes.science@gmail.com>
- * Date: 1/20/13
- * Time: 10:22 PM
- */
 public class RcatJigsawBotActivity extends Activity
         implements View.OnTouchListener, View.OnClickListener {
 
