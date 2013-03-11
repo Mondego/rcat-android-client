@@ -6,7 +6,7 @@
     <uses-sdk android:minSdkVersion="14"/>
     <uses-permission android:name="android.permission.INTERNET" />
     <application android:label="@string/app_name">
-        <activity android:name="RcatClientActivity"
+        <activity android:name=".RcatJigsawBotActivity"
                   android:label="@string/app_name"
                   android:screenOrientation="landscape"
                   android:theme="@android:style/Theme.NoTitleBar">
@@ -15,8 +15,5 @@
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
-        <activity android:name=".RcatJigsawBotActivity"
-                  android:screenOrientation="landscape"
-                  android:theme="@android:style/Theme.NoTitleBar"></activity>
     </application>
 </manifest> 

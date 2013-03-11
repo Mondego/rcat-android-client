@@ -28,8 +28,6 @@ public class RcatJigsawBotActivity extends Activity {
 
     private boolean running = false;
 
-    private HashMap<String, PuzzlePieceView> jigsawPieces;
-
     /** Autobahn WebSocket initializations **/
     private final WebSocketConnection mConnection = new WebSocketConnection();
 
@@ -72,7 +70,6 @@ public class RcatJigsawBotActivity extends Activity {
                                 activePlayerLoginButton();
 
                                 puzzleConfig.configure(msgContents.getJSONObject("c"));
-                                jigsawPieces = new HashMap<String, PuzzlePieceView>();
 
                                 //jigsawPrototypePieces = new HashMap<String, TextView>();
                                 //drawJigsawPuzzle();
@@ -169,16 +166,6 @@ public class RcatJigsawBotActivity extends Activity {
                 Integer pieceTargetCol = piece.getInt("c");
                 Integer pieceRemoteXPos = piece.getInt("x");
                 Integer pieceRemoteYPos = piece.getInt("y");
-
-                // Create new custom ImageView from this puzzle piece
-                jigsawPieces.put(pieceId,
-                        new PuzzlePieceView(this,
-                                pieceId, piecePlaced,
-                                pieceTargetRow, pieceTargetCol,
-                                pieceRemoteYPos, pieceRemoteXPos)
-                );
-
-                //Toast.makeText(RcatJigsawBotActivity.this, pieceId + ": " + pieceTargetRow + ", " + pieceTargetCol, Toast.LENGTH_SHORT).show();
 
             } catch (JSONException e) {
                // Toast.makeText(RcatJigsawBotActivity.this, "Failed JSON", Toast.LENGTH_LONG);
