@@ -45,16 +45,18 @@ public class RcatJigsawBotActivity extends Activity {
         super.onCreate(savedInstanceState);
 
         puzzleConfig = new RcatJigsawConfig(RcatJigsawBotActivity.this);
-        Bundle config = ExampleJigsawConfigurations.getRcatKittenExample(R.drawable.diablo_1mb);
+        Bundle config = ExampleJigsawConfigurations.getRcatKittenExample(R.drawable.happy_kitten);
 
         puzzleSurface = new PuzzleCompactSurface(this);
         JigsawPuzzle jigsawPuzzle = new JigsawPuzzle(this, config);
         puzzleSurface.setPuzzle(jigsawPuzzle);
 
         running = false;
-        setContentView(puzzleSurface);
-        // Connection to RCAT Server
         startJigsawWebsocketConnection();
+
+
+        setContentView(R.layout.blank_linear);
+        //setContentView(puzzleSurface);
     }
 
     private void startJigsawWebsocketConnection() {
@@ -76,16 +78,17 @@ public class RcatJigsawBotActivity extends Activity {
                         try {
                             JSONObject msgContents = new JSONObject(payload);
 
+                            // Configuration Message
                             if (msgContents.has("c")) {
                                 running = true;
                                 puzzleConfig.configure(msgContents.getJSONObject("c"));
                                 jigsawPieces = new HashMap<String, PuzzlePieceView>();
+
                                 //jigsawPrototypePieces = new HashMap<String, TextView>();
                                 //drawJigsawPuzzle();
-                            }
-                            else {
+                            } else {
                                 Log.d(TAG, "Error: No jigsaw configuration received");
-                                //Toast.makeText(RcatJigsawBotActivity.this, "No Configuration Found", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(RcatJigsawBotActivity.this, "No Configuration Found", Toast.LENGTH_LONG).show();
                             }
                         }
                         catch (Exception e) {
@@ -98,7 +101,34 @@ public class RcatJigsawBotActivity extends Activity {
                         try {
                             JSONObject msgContents = new JSONObject(payload);
 
-                            //Toast.makeText(RcatJigsawBotActivity.this, payload, Toast.LENGTH_LONG);
+                            if (msgContents.has("pm")) {
+                                // Piece moved message
+                                //Toast.makeText(RcatJigsawBotActivity.this, msgContents.get("pm").toString(), Toast.LENGTH_SHORT).show();
+
+                            } else if (msgContents.has("pd")) {
+                                // Piece dropped message
+                                //Toast.makeText(RcatJigsawBotActivity.this, msgContents.get("pd").toString(), Toast.LENGTH_SHORT).show();
+
+                            } else if (msgContents.has("NU")) {
+                                // New user message
+                                //Toast.makeText(RcatJigsawBotActivity.this, msgContents.get("NU").toString(), Toast.LENGTH_SHORT).show();
+
+                            } else if (msgContents.has("scu")) {
+                                // Score update message
+                                //Toast.makeText(RcatJigsawBotActivity.this, msgContents.get("scu").toString(), Toast.LENGTH_SHORT).show();
+
+                            } else if (msgContents.has("UD")) {
+                                // User left message
+                                //Toast.makeText(RcatJigsawBotActivity.this, msgContents.get("UD").toString(), Toast.LENGTH_SHORT).show();
+
+                            } else if (msgContents.has("go")) {
+                                // Game over message
+                                //Toast.makeText(RcatJigsawBotActivity.this, msgContents.get("go").toString(), Toast.LENGTH_SHORT).show();
+
+                            } else {
+                                Log.d(TAG, "Error: No jigsaw configuration received");
+                                Toast.makeText(RcatJigsawBotActivity.this, "No Configuration Found", Toast.LENGTH_LONG).show();
+                            }
 
                         } catch (Exception e) {
                             Log.d(TAG, e.toString());
@@ -113,7 +143,7 @@ public class RcatJigsawBotActivity extends Activity {
                 }
             });
         } catch (WebSocketException e) {
-
+            Toast.makeText(RcatJigsawBotActivity.this, "FAILURE", Toast.LENGTH_LONG).show();
             Log.d(TAG, e.toString());
         }
     }
