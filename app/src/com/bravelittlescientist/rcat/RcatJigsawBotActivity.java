@@ -1,17 +1,10 @@
 package com.bravelittlescientist.rcat;
 
 import android.app.Activity;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Color;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
 import android.util.Log;
 import android.view.Menu;
-import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.*;
 import com.bravelittlescientist.android_puzzle_view.ExampleJigsawConfigurations;
 import com.bravelittlescientist.android_puzzle_view.JigsawPuzzle;
@@ -19,7 +12,6 @@ import com.bravelittlescientist.android_puzzle_view.PuzzleCompactSurface;
 import de.tavendo.autobahn.WebSocketConnection;
 import de.tavendo.autobahn.WebSocketException;
 import de.tavendo.autobahn.WebSocketHandler;
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -34,12 +26,12 @@ public class RcatJigsawBotActivity extends Activity {
     private static final String TAG = RcatJigsawBotActivity.class.getSimpleName();
     private final String wsuri = "ws://10.0.2.2:8888/client";
 
-    private boolean running;
+    private boolean running = false;
 
     private HashMap<String, PuzzlePieceView> jigsawPieces;
 
     /** Autobahn WebSocket initializations **/
-    private final WebSocketConnection botConnection = new WebSocketConnection();
+    private final WebSocketConnection mConnection = new WebSocketConnection();
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -51,18 +43,14 @@ public class RcatJigsawBotActivity extends Activity {
         JigsawPuzzle jigsawPuzzle = new JigsawPuzzle(this, config);
         puzzleSurface.setPuzzle(jigsawPuzzle);
 
-        running = false;
+        setContentView(R.layout.puzzle_login);
         startJigsawWebsocketConnection();
-
-
-        setContentView(R.layout.blank_linear);
-        //setContentView(puzzleSurface);
     }
 
     private void startJigsawWebsocketConnection() {
 
         try {
-            botConnection.connect(wsuri, new WebSocketHandler() {
+            mConnection.connect(wsuri, new WebSocketHandler() {
 
                 @Override
                 public void onOpen() {
@@ -81,6 +69,8 @@ public class RcatJigsawBotActivity extends Activity {
                             // Configuration Message
                             if (msgContents.has("c")) {
                                 running = true;
+                                activePlayerLoginButton();
+
                                 puzzleConfig.configure(msgContents.getJSONObject("c"));
                                 jigsawPieces = new HashMap<String, PuzzlePieceView>();
 
@@ -90,13 +80,12 @@ public class RcatJigsawBotActivity extends Activity {
                                 Log.d(TAG, "Error: No jigsaw configuration received");
                                 Toast.makeText(RcatJigsawBotActivity.this, "No Configuration Found", Toast.LENGTH_LONG).show();
                             }
-                        }
-                        catch (Exception e) {
+                        } catch (Exception e) {
                             Log.d(TAG, e.toString());
                         }
 
 
-                    // Game is now running.
+                        // Game is now running.
                     } else {
                         try {
                             JSONObject msgContents = new JSONObject(payload);
@@ -201,6 +190,35 @@ public class RcatJigsawBotActivity extends Activity {
     public boolean onCreateOptionsMenu(Menu menu) {
         super.onCreateOptionsMenu(menu);
         return true;
+    }
+
+    public void activePlayerLoginButton() {
+        Button loginButton = (Button)findViewById(R.id.playerLoginbutton);
+        loginButton.setText(R.string.loginButtonText);
+        loginButton.setEnabled(true);
+    }
+
+    public void onPlayerLogin(View view) {
+        // Send text of player login to socket
+        EditText playerLoginName = (EditText)findViewById(R.id.player_name_entry_field);
+        String playerName = playerLoginName.getText().toString();
+
+        if (playerName.length() > 0) {
+            try {
+                JSONObject userLoginMessage = new JSONObject();
+                userLoginMessage.put("usr", playerName);
+
+                mConnection.sendTextMessage(userLoginMessage.toString());
+                setContentView(puzzleSurface);
+
+            } catch (JSONException e) {
+                Log.d(TAG, "JSON Exception: Sending player login name");
+
+                // TODO: Error handling in UI in case connection doesn't work
+            }
+        } else {
+            Toast.makeText(RcatJigsawBotActivity.this, "Please enter a login name.", Toast.LENGTH_LONG).show();
+        }
     }
 
     @Override

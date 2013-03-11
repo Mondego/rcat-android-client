@@ -2,4 +2,10 @@
 <resources>
     <string name="app_name">rcat-android</string>
     <string name="jigsaw_game_text_text">Jigsaw Game Text Placeholder</string>
+
+    <!-- Player Login -->
+    <string name="loginLabelText">Player Name</string>
+    <string name="loginDefaultText">Guest</string>
+    <string name="loginButtonText">Join Game!</string>
+    <string name="loginButtonNotReadyText">Finding Game...</string>
 </resources>
