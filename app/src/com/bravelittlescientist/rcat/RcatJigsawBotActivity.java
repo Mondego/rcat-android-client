@@ -33,15 +33,16 @@ public class RcatJigsawBotActivity extends Activity {
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.puzzle_login);
 
         puzzleConfig = new RcatJigsawConfig(RcatJigsawBotActivity.this);
-        Bundle config = ExampleJigsawConfigurations.getRcatKittenExample(R.drawable.happy_kitten);
+        Bundle config = ExampleJigsawConfigurations.getRcatKittenExample(R.drawable.diablo_1mb);
 
         puzzleSurface = new PuzzleCompactSurface(this);
         JigsawPuzzle jigsawPuzzle = new JigsawPuzzle(this, config);
         puzzleSurface.setPuzzle(jigsawPuzzle);
 
-        setContentView(R.layout.puzzle_login);
+
         startJigsawWebsocketConnection();
     }
 
