@@ -18,7 +18,7 @@ public class RcatJigsawBotActivity extends Activity {
     private RcatJigsawConfig puzzleConfig;
 
     private static final String TAG = RcatJigsawBotActivity.class.getSimpleName();
-    private final String wsuri = "ws://10.0.2.2:8888/client";
+    private String wsuri = "ws://10.0.2.2:8888/client";
 
     private boolean running = false;
 
@@ -27,11 +27,8 @@ public class RcatJigsawBotActivity extends Activity {
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        setContentView(R.layout.enter_host_view);
         puzzleConfig = new RcatJigsawConfig();
-
-        setContentView(R.layout.puzzle_login);
-        startJigsawWebsocketConnection();
     }
 
     private void startJigsawWebsocketConnection() {
@@ -159,6 +156,16 @@ public class RcatJigsawBotActivity extends Activity {
         } else {
             Toast.makeText(RcatJigsawBotActivity.this, "Please enter a login name.", Toast.LENGTH_LONG).show();
         }
+    }
+
+    public void onWebsocketInfoAdded(View view) {
+
+        EditText hostAddress = (EditText)findViewById(R.id.enterIPText);
+        String host = hostAddress.getText().toString();
+        wsuri = "ws://" + host + ":8888/client";
+
+        setContentView(R.layout.puzzle_login);
+        startJigsawWebsocketConnection();
     }
 
     @Override
