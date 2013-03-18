@@ -79,7 +79,7 @@ public class RcatExtendedJigsawPuzzle extends JigsawPuzzle {
             }
         }
 
-        /*for (String puzzleKey : pieces.keySet()) {
+        for (String puzzleKey : pieces.keySet()) {
             // Create mapping between original puzzle management and new one
             Bundle piece = pieces.getBundle(puzzleKey);
             int pieceDropX = piece.getInt("c");
@@ -89,7 +89,7 @@ public class RcatExtendedJigsawPuzzle extends JigsawPuzzle {
 
             // Update Piece Lockage
             pieceLocked[legacyMapping] = piece.getBoolean("b");
-        }   */
+        }
     }
 
     public String[] getLegacyPieceMapping() {

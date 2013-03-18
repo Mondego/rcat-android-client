@@ -11,20 +11,18 @@ import java.util.Random;
 
 public class RcatExtendedPuzzleSurface extends PuzzleCompactSurface {
 
-    //protected RcatExtendedJigsawPuzzle puzzle;
-
     public RcatExtendedPuzzleSurface(Context context) {
         super(context);
     }
 
-    public void setPuzzle(JigsawPuzzle jigsawPuzzle) {
+    public void setPuzzle(RcatExtendedJigsawPuzzle jigsawPuzzle) {
 
         puzzle = jigsawPuzzle;
         Random r = new Random();
 
         if (puzzle.isBackgroundTextureOn()) {
             backgroundImage = new BitmapDrawable(puzzle.getBackgroundTexture());
-            backgroundImage.setBounds(0, 0, 800, 480);
+            backgroundImage.setBounds(0, 0, jigsawPuzzle.getScaledWidthDimension(), jigsawPuzzle.getScaledHeightDimension());
         }
         framePaint = new Paint();
         framePaint.setColor(Color.BLACK);
@@ -35,8 +33,8 @@ public class RcatExtendedPuzzleSurface extends PuzzleCompactSurface {
         Bitmap[] originalPieces = puzzle.getPuzzlePiecesArray();
         int[][] positions = puzzle.getPuzzlePieceTargetPositions();
         int[] dimensions = puzzle.getPuzzleDimensions();
-        //String[] rcatMappings = puzzle.getLegacyPieceMapping();
-        //Bundle rcatPieces = puzzle.getConfig().getBundle("pieces");
+        String[] rcatMappings = jigsawPuzzle.getLegacyPieceMapping();
+        Bundle rcatPieces = puzzle.getConfig().getBundle("pieces");
 
         // Initialize piece drawable managers
         scaledSurfacePuzzlePieces = new BitmapDrawable[originalPieces.length];
@@ -48,8 +46,8 @@ public class RcatExtendedPuzzleSurface extends PuzzleCompactSurface {
             scaledSurfacePuzzlePieces[i] = new BitmapDrawable(originalPieces[i]);
 
             // Top left is (0,0) in Android canvas
-            int topLeftX = r.nextInt(800 - MAX_PUZZLE_PIECE_SIZE);
-            int topLeftY = r.nextInt(480 - 2*MAX_PUZZLE_PIECE_SIZE);
+            int topLeftX = r.nextInt(jigsawPuzzle.getScaledWidthDimension() - MAX_PUZZLE_PIECE_SIZE);
+            int topLeftY = r.nextInt(jigsawPuzzle.getScaledHeightDimension() - 2*MAX_PUZZLE_PIECE_SIZE);
 
             scaledSurfacePuzzlePieces[i].setBounds(topLeftX, topLeftY,
                     topLeftX + MAX_PUZZLE_PIECE_SIZE, topLeftY + MAX_PUZZLE_PIECE_SIZE);
