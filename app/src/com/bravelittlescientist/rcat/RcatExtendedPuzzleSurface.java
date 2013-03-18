@@ -115,12 +115,12 @@ public class RcatExtendedPuzzleSurface extends PuzzleCompactSurface {
             if (!puzzle.isPieceLocked(bmd)) {
                 scaledSurfacePuzzlePieces[bmd].draw(canvas);
 
-                if (otherPlayerMoving[bmd]) {
-                    Rect oPM = scaledSurfacePuzzlePieces[bmd].copyBounds();
-                    canvas.drawRect(oPM.left, oPM.top, oPM.right, oPM.bottom, lockedPaint);
-                } else if (thisPlayerMoving[bmd]) {
+                if (thisPlayerMoving[bmd]) {
                     Rect oTM = scaledSurfacePuzzlePieces[bmd].copyBounds();
                     canvas.drawRect(oTM.left, oTM.top, oTM.right, oTM.bottom, controlledPaint);
+                } else if (otherPlayerMoving[bmd]) {
+                    Rect oPM = scaledSurfacePuzzlePieces[bmd].copyBounds();
+                    canvas.drawRect(oPM.left, oPM.top, oPM.right, oPM.bottom, lockedPaint);
                 }
             }
         }
@@ -143,6 +143,7 @@ public class RcatExtendedPuzzleSurface extends PuzzleCompactSurface {
                         // Trigger puzzle piece picked up
                         onJigsawEventPieceMove(found, place.left, place.top);
                         thisPlayerMoving[found] = true;
+                        otherPlayerMoving[found] = false;
                     }
                 }
                 break;
@@ -172,6 +173,7 @@ public class RcatExtendedPuzzleSurface extends PuzzleCompactSurface {
                         // Trigger jigsaw piece event
                         onJigsawEventPieceMove(found, rect.left, rect.top);
                         thisPlayerMoving[found] = true;
+                        otherPlayerMoving[found] = false;
                     }
                 }
                 break;
