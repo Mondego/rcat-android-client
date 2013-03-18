@@ -4,8 +4,6 @@ import android.content.Context;
 import android.graphics.*;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
-import android.util.Log;
-import android.view.MotionEvent;
 import com.bravelittlescientist.android_puzzle_view.PuzzleCompactSurface;
 import org.json.JSONObject;
 
@@ -13,6 +11,7 @@ import java.util.Random;
 
 public class RcatExtendedPuzzleSurface extends PuzzleCompactSurface {
 
+    private RcatExtendedJigsawPuzzle future;
     private Context msgContext;
 
     public RcatExtendedPuzzleSurface(Context context) {
@@ -23,12 +22,13 @@ public class RcatExtendedPuzzleSurface extends PuzzleCompactSurface {
 
     public void setPuzzle(RcatExtendedJigsawPuzzle jigsawPuzzle) {
 
+        future = jigsawPuzzle;
         puzzle = jigsawPuzzle;
         Random r = new Random();
 
         if (puzzle.isBackgroundTextureOn()) {
             backgroundImage = new BitmapDrawable(puzzle.getBackgroundTexture());
-            backgroundImage.setBounds(0, 0, jigsawPuzzle.getScaledWidthDimension(), jigsawPuzzle.getScaledHeightDimension());
+            backgroundImage.setBounds(0, 0, future.getScaledWidthDimension(), future.getScaledHeightDimension());
         }
         framePaint = new Paint();
         framePaint.setColor(Color.BLACK);
@@ -36,17 +36,17 @@ public class RcatExtendedPuzzleSurface extends PuzzleCompactSurface {
         framePaint.setTextSize(20);
 
         /** Set Lock Zone **/
-        LOCK_ZONE_LEFT = jigsawPuzzle.getScaledGridPositionX();
-        LOCK_ZONE_TOP = jigsawPuzzle.getScaledGridPositionY();
-        LOCK_ZONE_RIGHT = LOCK_ZONE_LEFT + jigsawPuzzle.getScaledGridWidth();
-        LOCK_ZONE_BOTTOM = LOCK_ZONE_TOP + jigsawPuzzle.getScaledGridHeight();
+        LOCK_ZONE_LEFT = future.getScaledGridPositionX();
+        LOCK_ZONE_TOP = future.getScaledGridPositionY();
+        LOCK_ZONE_RIGHT = LOCK_ZONE_LEFT + future.getScaledGridWidth();
+        LOCK_ZONE_BOTTOM = LOCK_ZONE_TOP + future.getScaledGridHeight();
 
         /** Initialize drawables from puzzle pieces **/
         Bitmap[] originalPieces = puzzle.getPuzzlePiecesArray();
         int[][] positions = puzzle.getPuzzlePieceTargetPositions();
         int[] dimensions = puzzle.getPuzzleDimensions();
-        String[] rcatMappings = jigsawPuzzle.getLegacyPieceMapping();
-        Bundle rcatPieces = puzzle.getConfig().getBundle("pieces");
+        String[] rcatMappings = future.getLegacyPieceMapping();
+        Bundle rcatPieces = future.getConfig().getBundle("pieces");
 
         // Initialize piece drawable managers
         scaledSurfacePuzzlePieces = new BitmapDrawable[originalPieces.length];
@@ -102,6 +102,16 @@ public class RcatExtendedPuzzleSurface extends PuzzleCompactSurface {
             Integer moveToX = msg.getInt("x");
             Integer moveToY = msg.getInt("y");
 
+            Bundle rcatMappings = future.getLegacyPieceMappingInverse();
+            Bundle rcatPieces = future.getConfig().getBundle("pieces");
+            int targetPiece = rcatMappings.getInt(pieceId);
+
+            Rect place = scaledSurfacePuzzlePieces[targetPiece].copyBounds();
+            place.left = moveToX;
+            place.top = moveToY;
+            place.right = moveToX + MAX_PUZZLE_PIECE_SIZE;
+            place.bottom = moveToY + MAX_PUZZLE_PIECE_SIZE;
+            scaledSurfacePuzzlePieces[targetPiece].setBounds(place);
 
         } catch (Exception e) {}
     }
@@ -112,6 +122,21 @@ public class RcatExtendedPuzzleSurface extends PuzzleCompactSurface {
             Integer moveToX = msg.getInt("x");
             Integer moveToY = msg.getInt("y");
             Boolean isBound = msg.getBoolean("b");
+
+            Bundle rcatMappings = future.getLegacyPieceMappingInverse();
+            Bundle rcatPieces = future.getConfig().getBundle("pieces");
+            int targetPiece = rcatMappings.getInt(pieceId);
+
+            Rect place = scaledSurfacePuzzlePieces[targetPiece].copyBounds();
+            place.left = moveToX;
+            place.top = moveToY;
+            place.right = moveToX + MAX_PUZZLE_PIECE_SIZE;
+            place.bottom = moveToY + MAX_PUZZLE_PIECE_SIZE;
+            scaledSurfacePuzzlePieces[targetPiece].setBounds(place);
+
+            if (isBound) {
+                puzzle.setPieceLocked(targetPiece, true);
+            }
 
         } catch (Exception e) {}
     }

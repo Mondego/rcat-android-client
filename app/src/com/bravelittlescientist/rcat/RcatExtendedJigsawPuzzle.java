@@ -13,6 +13,7 @@ public class RcatExtendedJigsawPuzzle extends JigsawPuzzle {
     private Integer scaledWidthDimension;
     private Integer scaledHeightDimension;
     private String[] rcatPieceMapping;
+    private Bundle rcatPieceMappingInverse;
 
     private Bundle activePieces;
 
@@ -97,6 +98,7 @@ public class RcatExtendedJigsawPuzzle extends JigsawPuzzle {
         pieceLocked = new boolean[pieces.size()];
         puzzlePieceTargetPositions = new int[puzzleGridX][puzzleGridY];
         rcatPieceMapping = new String[pieces.size()];
+        rcatPieceMappingInverse = new Bundle();
 
         // Legacy Puzzle Filling
         int counter = 0;
@@ -123,10 +125,15 @@ public class RcatExtendedJigsawPuzzle extends JigsawPuzzle {
 
             // Update Piece Lockage
             pieceLocked[legacyMapping] = piece.getBoolean("b");
+            rcatPieceMappingInverse.putInt(puzzleKey, legacyMapping);
         }
     }
 
     public String[] getLegacyPieceMapping() {
         return rcatPieceMapping;
+    }
+
+    public Bundle getLegacyPieceMappingInverse() {
+        return rcatPieceMappingInverse;
     }
 }
