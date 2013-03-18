@@ -62,7 +62,7 @@ public class RcatJigsawBotActivity extends Activity {
 
                                 /** Puzzle Surface Configuration **/
                                 puzzleConfig.configure(msgContents.getJSONObject("c"), R.drawable.diablo_1mb);
-                                puzzleSurface = new RcatExtendedPuzzleSurface(RcatJigsawBotActivity.this);
+                                puzzleSurface = new RcatExtendedPuzzleSurface(RcatJigsawBotActivity.this, mConnection);
                                 RcatExtendedJigsawPuzzle jigsawPuzzle = new RcatExtendedJigsawPuzzle(RcatJigsawBotActivity.this, puzzleConfig.getFullConfiguration());
                                 puzzleSurface.setPuzzle(jigsawPuzzle);
 

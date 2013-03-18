@@ -4,7 +4,10 @@ import android.content.Context;
 import android.graphics.*;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
+import android.view.MotionEvent;
 import com.bravelittlescientist.android_puzzle_view.PuzzleCompactSurface;
+import de.tavendo.autobahn.WebSocketConnection;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.Random;
@@ -14,13 +17,16 @@ public class RcatExtendedPuzzleSurface extends PuzzleCompactSurface {
     private RcatExtendedJigsawPuzzle future;
     private Context msgContext;
     private boolean[] otherPlayerMoving;
+    private boolean[] thisPlayerMoving;
     private Paint lockedPaint;
     private Paint controlledPaint;
+    private WebSocketConnection mConn;
 
-    public RcatExtendedPuzzleSurface(Context context) {
+    public RcatExtendedPuzzleSurface(Context context, WebSocketConnection conn) {
         super(context);
         //MAX_PUZZLE_PIECE_SIZE = 80;
         msgContext = context;
+        mConn = conn;
 
         lockedPaint = new Paint();
         lockedPaint.setColor(Color.RED);
@@ -65,6 +71,7 @@ public class RcatExtendedPuzzleSurface extends PuzzleCompactSurface {
         scaledSurfacePuzzlePieces = new BitmapDrawable[originalPieces.length];
         scaledSurfaceTargetBounds = new Rect[originalPieces.length];
         otherPlayerMoving = new boolean[originalPieces.length];
+        thisPlayerMoving = new boolean[originalPieces.length];
 
         // Draw pieces onto surface
         for (int i = 0; i < originalPieces.length; i++) {
@@ -78,6 +85,7 @@ public class RcatExtendedPuzzleSurface extends PuzzleCompactSurface {
             scaledSurfacePuzzlePieces[i].setBounds(topLeftX, topLeftY,
                     topLeftX + MAX_PUZZLE_PIECE_SIZE, topLeftY + MAX_PUZZLE_PIECE_SIZE);
             otherPlayerMoving[i] = false;
+            thisPlayerMoving[i] = false;
         }
 
         for (int w = 0; w < dimensions[2]; w++) {
@@ -110,9 +118,77 @@ public class RcatExtendedPuzzleSurface extends PuzzleCompactSurface {
                 if (otherPlayerMoving[bmd]) {
                     Rect oPM = scaledSurfacePuzzlePieces[bmd].copyBounds();
                     canvas.drawRect(oPM.left, oPM.top, oPM.right, oPM.bottom, lockedPaint);
+                } else if (thisPlayerMoving[bmd]) {
+                    Rect oTM = scaledSurfacePuzzlePieces[bmd].copyBounds();
+                    canvas.drawRect(oTM.left, oTM.top, oTM.right, oTM.bottom, controlledPaint);
                 }
             }
         }
+    }
+
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        int xPos =(int) event.getX();
+        int yPos =(int) event.getY();
+
+        switch (event.getAction()) {
+
+            case MotionEvent.ACTION_DOWN:
+                for (int i = 0; i < scaledSurfacePuzzlePieces.length; i++) {
+                    Rect place = scaledSurfacePuzzlePieces[i].copyBounds();
+
+                    if (place.contains(xPos, yPos) && !puzzle.isPieceLocked(i)) {
+                        found = i;
+
+                        // Trigger puzzle piece picked up
+                        onJigsawEventPieceMove(found, place.left, place.top);
+                        thisPlayerMoving[found] = true;
+                    }
+                }
+                break;
+
+
+            case MotionEvent.ACTION_MOVE:
+                if (found >= 0 && found < scaledSurfacePuzzlePieces.length && !puzzle.isPieceLocked(found)) {
+                    // Lock into position...
+                    if (scaledSurfaceTargetBounds[found].contains(xPos, yPos) ) {
+                        scaledSurfacePuzzlePieces[found].setBounds(scaledSurfaceTargetBounds[found]);
+                        //puzzle.setPieceLocked(found, true);
+
+                        // Trigger jigsaw piece events
+                        onJigsawEventPieceDrop(found,
+                                scaledSurfacePuzzlePieces[found].copyBounds().left,
+                                scaledSurfacePuzzlePieces[found].copyBounds().top);
+                        thisPlayerMoving[found] = false;
+                    } else {
+                        Rect rect = scaledSurfacePuzzlePieces[found].copyBounds();
+
+                        rect.left = xPos - MAX_PUZZLE_PIECE_SIZE/2;
+                        rect.top = yPos - MAX_PUZZLE_PIECE_SIZE/2;
+                        rect.right = xPos + MAX_PUZZLE_PIECE_SIZE/2;
+                        rect.bottom = yPos + MAX_PUZZLE_PIECE_SIZE/2;
+                        scaledSurfacePuzzlePieces[found].setBounds(rect);
+
+                        // Trigger jigsaw piece event
+                        onJigsawEventPieceMove(found, rect.left, rect.top);
+                        thisPlayerMoving[found] = true;
+                    }
+                }
+                break;
+
+            case MotionEvent.ACTION_UP:
+                // Trigger jigsaw piece event
+                if (found >= 0 && found < scaledSurfacePuzzlePieces.length) {
+                    onJigsawEventPieceDrop(found, xPos, yPos);
+                    thisPlayerMoving[found] = false;
+                }
+                found = -1;
+                break;
+
+        }
+
+
+        return true;
     }
 
     /** Piece Movements **/
@@ -123,7 +199,6 @@ public class RcatExtendedPuzzleSurface extends PuzzleCompactSurface {
             Integer moveToY = msg.getInt("y");
 
             Bundle rcatMappings = future.getLegacyPieceMappingInverse();
-            Bundle rcatPieces = future.getConfig().getBundle("pieces");
             int targetPiece = rcatMappings.getInt(pieceId);
 
             Rect place = scaledSurfacePuzzlePieces[targetPiece].copyBounds();
@@ -147,7 +222,6 @@ public class RcatExtendedPuzzleSurface extends PuzzleCompactSurface {
             Boolean isBound = msg.getBoolean("b");
 
             Bundle rcatMappings = future.getLegacyPieceMappingInverse();
-            Bundle rcatPieces = future.getConfig().getBundle("pieces");
             int targetPiece = rcatMappings.getInt(pieceId);
 
             Rect place = scaledSurfacePuzzlePieces[targetPiece].copyBounds();
@@ -167,7 +241,28 @@ public class RcatExtendedPuzzleSurface extends PuzzleCompactSurface {
         } catch (Exception e) {}
     }
 
-    protected void isPieceOnTargetLocation() {
+    public void onJigsawEventPieceMove (int index, int x, int y) {
+        JSONObject message = new JSONObject();
+        JSONObject pm = new JSONObject();
+        try {
+            pm.put("id", future.getLegacyPieceMapping()[index]);
+            pm.put("x", x);
+            pm.put("y", y);
+            message.put("pm", pm);
+            mConn.sendTextMessage(message.toString());
+        } catch (JSONException e) {}
+    }
 
+    public void onJigsawEventPieceDrop (int index, int x, int y) {
+        JSONObject message = new JSONObject();
+        JSONObject pd = new JSONObject();
+        try {
+            pd.put("id", future.getLegacyPieceMapping()[index]);
+            pd.put("x", x);
+            pd.put("y", y);
+            pd.put("b", false); // TODO
+            message.put("pd", pd);
+            mConn.sendTextMessage(message.toString());
+        } catch (JSONException e) {}
     }
 }
