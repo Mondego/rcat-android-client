@@ -14,6 +14,8 @@ public class RcatExtendedJigsawPuzzle extends JigsawPuzzle {
     private Integer scaledHeightDimension;
     private String[] rcatPieceMapping;
 
+    private Bundle activePieces;
+
     /**
      * RcatExtendedJigsawPuzzle constructor: Bundle configuration
      * @param context

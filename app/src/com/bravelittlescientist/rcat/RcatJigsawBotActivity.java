@@ -80,11 +80,11 @@ public class RcatJigsawBotActivity extends Activity {
 
                             if (msgContents.has("pm")) {
                                 // Piece moved message
-                                //Toast.makeText(RcatJigsawBotActivity.this, msgContents.get("pm").toString(), Toast.LENGTH_SHORT).show();
+                                puzzleSurface.onMovePieceFromMessage(msgContents.getJSONObject("pm"));
 
                             } else if (msgContents.has("pd")) {
                                 // Piece dropped message
-                                //Toast.makeText(RcatJigsawBotActivity.this, msgContents.get("pd").toString(), Toast.LENGTH_SHORT).show();
+                                puzzleSurface.onDropPieceFromMessage(msgContents.getJSONObject("pd"));
 
                             } else if (msgContents.has("NU")) {
                                 // New user message

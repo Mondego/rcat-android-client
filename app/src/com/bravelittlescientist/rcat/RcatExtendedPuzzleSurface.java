@@ -4,15 +4,21 @@ import android.content.Context;
 import android.graphics.*;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
-import com.bravelittlescientist.android_puzzle_view.JigsawPuzzle;
+import android.util.Log;
+import android.view.MotionEvent;
 import com.bravelittlescientist.android_puzzle_view.PuzzleCompactSurface;
+import org.json.JSONObject;
 
 import java.util.Random;
 
 public class RcatExtendedPuzzleSurface extends PuzzleCompactSurface {
 
+    private Context msgContext;
+
     public RcatExtendedPuzzleSurface(Context context) {
         super(context);
+        //MAX_PUZZLE_PIECE_SIZE = 80;
+        msgContext = context;
     }
 
     public void setPuzzle(RcatExtendedJigsawPuzzle jigsawPuzzle) {
@@ -53,7 +59,7 @@ public class RcatExtendedPuzzleSurface extends PuzzleCompactSurface {
 
             // Top left is (0,0) in Android canvas
             int topLeftX = rcatPieces.getBundle(rcatMappings[i]).getInt("x");
-            int topLeftY = ((Double) (0.8 * rcatPieces.getBundle(rcatMappings[i]).getInt("y"))).intValue();
+            int topLeftY = rcatPieces.getBundle(rcatMappings[i]).getInt("y");
 
             scaledSurfacePuzzlePieces[i].setBounds(topLeftX, topLeftY,
                     topLeftX + MAX_PUZZLE_PIECE_SIZE, topLeftY + MAX_PUZZLE_PIECE_SIZE);
@@ -71,4 +77,44 @@ public class RcatExtendedPuzzleSurface extends PuzzleCompactSurface {
             }
         }
     }
+
+    @Override
+    protected void onDraw(Canvas canvas) {
+        super.onDraw(canvas);
+
+        for (int bmd = 0; bmd < scaledSurfacePuzzlePieces.length; bmd++) {
+            if (puzzle.isPieceLocked(bmd)) {
+                scaledSurfacePuzzlePieces[bmd].draw(canvas);
+            }
+        }
+
+        for (int bmd = 0; bmd < scaledSurfacePuzzlePieces.length; bmd++) {
+            if (!puzzle.isPieceLocked(bmd)) {
+                scaledSurfacePuzzlePieces[bmd].draw(canvas);
+            }
+        }
+    }
+
+    /** Piece Movements **/
+    public void onMovePieceFromMessage(JSONObject msg) {
+        try {
+            String pieceId = msg.getString("id");
+            Integer moveToX = msg.getInt("x");
+            Integer moveToY = msg.getInt("y");
+
+
+        } catch (Exception e) {}
+    }
+
+    public void onDropPieceFromMessage(JSONObject msg) {
+        try {
+            String pieceId = msg.getString("id");
+            Integer moveToX = msg.getInt("x");
+            Integer moveToY = msg.getInt("y");
+            Boolean isBound = msg.getBoolean("b");
+
+        } catch (Exception e) {}
+    }
+
+
 }
