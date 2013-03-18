@@ -13,11 +13,24 @@ public class RcatExtendedPuzzleSurface extends PuzzleCompactSurface {
 
     private RcatExtendedJigsawPuzzle future;
     private Context msgContext;
+    private boolean[] otherPlayerMoving;
+    private Paint lockedPaint;
+    private Paint controlledPaint;
 
     public RcatExtendedPuzzleSurface(Context context) {
         super(context);
         //MAX_PUZZLE_PIECE_SIZE = 80;
         msgContext = context;
+
+        lockedPaint = new Paint();
+        lockedPaint.setColor(Color.RED);
+        lockedPaint.setStyle(Paint.Style.STROKE);
+        lockedPaint.setStrokeWidth(5);
+
+        controlledPaint = new Paint();
+        controlledPaint.setColor(Color.BLUE);
+        controlledPaint.setStyle(Paint.Style.STROKE);
+        controlledPaint.setStrokeWidth(5);
     }
 
     public void setPuzzle(RcatExtendedJigsawPuzzle jigsawPuzzle) {
@@ -51,6 +64,7 @@ public class RcatExtendedPuzzleSurface extends PuzzleCompactSurface {
         // Initialize piece drawable managers
         scaledSurfacePuzzlePieces = new BitmapDrawable[originalPieces.length];
         scaledSurfaceTargetBounds = new Rect[originalPieces.length];
+        otherPlayerMoving = new boolean[originalPieces.length];
 
         // Draw pieces onto surface
         for (int i = 0; i < originalPieces.length; i++) {
@@ -63,6 +77,7 @@ public class RcatExtendedPuzzleSurface extends PuzzleCompactSurface {
 
             scaledSurfacePuzzlePieces[i].setBounds(topLeftX, topLeftY,
                     topLeftX + MAX_PUZZLE_PIECE_SIZE, topLeftY + MAX_PUZZLE_PIECE_SIZE);
+            otherPlayerMoving[i] = false;
         }
 
         for (int w = 0; w < dimensions[2]; w++) {
@@ -91,6 +106,11 @@ public class RcatExtendedPuzzleSurface extends PuzzleCompactSurface {
         for (int bmd = 0; bmd < scaledSurfacePuzzlePieces.length; bmd++) {
             if (!puzzle.isPieceLocked(bmd)) {
                 scaledSurfacePuzzlePieces[bmd].draw(canvas);
+
+                if (otherPlayerMoving[bmd]) {
+                    Rect oPM = scaledSurfacePuzzlePieces[bmd].copyBounds();
+                    canvas.drawRect(oPM.left, oPM.top, oPM.right, oPM.bottom, lockedPaint);
+                }
             }
         }
     }
@@ -111,6 +131,9 @@ public class RcatExtendedPuzzleSurface extends PuzzleCompactSurface {
             place.top = moveToY;
             place.right = moveToX + MAX_PUZZLE_PIECE_SIZE;
             place.bottom = moveToY + MAX_PUZZLE_PIECE_SIZE;
+
+            otherPlayerMoving[targetPiece] = true;
+
             scaledSurfacePuzzlePieces[targetPiece].setBounds(place);
 
         } catch (Exception e) {}
@@ -134,12 +157,17 @@ public class RcatExtendedPuzzleSurface extends PuzzleCompactSurface {
             place.bottom = moveToY + MAX_PUZZLE_PIECE_SIZE;
             scaledSurfacePuzzlePieces[targetPiece].setBounds(place);
 
+            otherPlayerMoving[targetPiece] = false;
+
             if (isBound) {
                 puzzle.setPieceLocked(targetPiece, true);
+                future.setPieceLocked(targetPiece, true);
             }
 
         } catch (Exception e) {}
     }
 
+    protected void isPieceOnTargetLocation() {
 
+    }
 }
