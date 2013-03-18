@@ -1,49 +1,34 @@
 package com.bravelittlescientist.rcat;
 
-import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.util.Log;
-import android.widget.FrameLayout;
-import android.widget.ImageView;
-import android.widget.RelativeLayout;
+import android.os.Bundle;
+import android.widget.Toast;
 import org.json.JSONException;
 import org.json.JSONObject;
-import java.util.Random;
 
-/**
- * Created with IntelliJ IDEA.
- * User: Eugenia Gabrielova <genia.likes.science@gmail.com>
- * Date: 1/20/13
- * Time: 8:36 PM
- */
 public class RcatJigsawConfig {
 
-    /**
-     * This class is designed to manage the input configuration of an RCAT Jigsaw puzzle.
-     */
     private static final String TAG = "RcatJigsawConfig";
 
     /** Game Configuration **/
-    private JSONObject grid;
-    private JSONObject imgSet;
-    private JSONObject board;
-    private JSONObject dfrus;
-    private JSONObject pieces;
-    private String myId;
-    private String imgUrl;
+    Bundle board;
+    Bundle grid;
+    Bundle frus;
+    Bundle pieces;
+    Bundle img;
+    Bundle scores;
 
-    private Context cfgContext;
-
-    private boolean running = false;
-
-    public RcatJigsawConfig(Context c) {
-        cfgContext = c;
+    public RcatJigsawConfig() {
+        board = new Bundle();
+        grid = new Bundle();
+        frus = new Bundle();
+        pieces = new Bundle();
+        img = new Bundle();
+        scores = new Bundle();
     }
 
     public void configure(JSONObject config) {
 
-        try {
+        /*try {
             imgSet = config.getJSONObject("img");
             board = config.getJSONObject("board");
             grid = config.getJSONObject("grid");
@@ -55,120 +40,52 @@ public class RcatJigsawConfig {
 
         catch (JSONException je) {
             Log.d(TAG, je.toString());
-        }
+        }  */
+
+
     }
 
-    /** Getters **/
-    /**
-     * getGrid
-     * @return grid, JSON Object
-     * grid["nrows"]    number of puzzle rows
-     * grid["ncols"]    number of puzzle columns
-     * grid["cellw"]    cell dimensions, width
-     * grid["cellh"]    cell dimensions, height
-     * grid["y"]        ???
-     * grid["x"]        ???
-     */
-    public JSONObject getGrid() {
-        return grid;
-    }
+    /** Getters and Setters **/
 
     /**
-     * getBoard
-     * @return board, JSON Object
-     * board["w"]           width of gameplay board
-     * board["h"]           height of gameplay board
-     * board["maxScale"]    maximum scale of board
-     * board["minscale"]    minimum scale of board
+     * getFullConfiguration returns all configuration info.
+     * @return config, a Bundle containing all configuration subbundles
      */
-    public JSONObject getBoard() {
+    public Bundle getFullConfiguration() {
+        Bundle config = new Bundle();
+        config.putBundle("board", board);
+        config.putBundle("grid", grid);
+        config.putBundle("frus", frus);
+        config.putBundle("pieces", pieces);
+        config.putBundle("img", img);
+        config.putBundle("scores", scores);
+
+        // TODO config.putString("myId", "player1234-uid");
+
+        return config;
+    }
+
+    public Bundle getBoard() {
         return board;
     }
 
-    /**
-     * getImgSet
-     * @return imgSet, JSON Object
-     * imgSet["img_url"]    URL of puzzle image
-     * imgSet["img_w"]      Height of puzzle image
-     * imgset["img_h"]      Width of puzzle image
-     */
-    public JSONObject getImgSet () {
-        return imgSet;
+    public Bundle getGrid() {
+        return grid;
     }
 
-    /**
-     * getMyId
-     * @return myId, String
-     */
-    public String getMyId () {
-        return myId;
+    public Bundle getFrus() {
+        return frus;
     }
 
-    /**
-     * getImgUrl
-     * @return imgUrl, String
-     */
-    public String getImgUrl () {
-        return imgUrl;
-    }
-
-    /**
-     * getPieces
-     * @return pieces, JSON Object
-     *
-     */
-    public JSONObject getPieces () {
+    public Bundle getPieces() {
         return pieces;
     }
 
-
-    public void automateBot () {
-        int x = 0;
-        int y = 0;
-        Log.d(TAG, "[Jigsaw Bot: Starting bot...");
-        Random r = new Random();
-        while (running) {
-            /*v = random of pieces.values
-            if (!v['l'] || v['l'] == "None"]) {
-                while (running) {
-                    while (y < board.getInt("h")) {
-                        while (x < board.getInt("w")) {
-                            // Send piece     via move_piece(v, x, y)
-                            // Thread sleeps
-                        }
-
-                        x = 0;
-                        y += 5;
-                    }
-
-                    y = 0;
-                    x = 0;
-                }
-            }
-
-
-            */
-        }
-
+    public Bundle getImg() {
+        return getImg();
     }
 
-    public void movePiece (JSONObject p, int x, int y) {
-
-        try {
-            // Generate message contents
-            JSONObject payload = new JSONObject();
-            payload.put("id", p.get("pid"));
-            payload.put("x", x);
-            payload.put("y", y);
-
-            JSONObject msg = new JSONObject();
-            msg.put("pm", payload);
-
-            // SEND
-        }
-        catch (JSONException je) {
-            Log.d(TAG, "Error: JSON Error");
-        }
-
+    public Bundle getScores() {
+        return scores;
     }
 }

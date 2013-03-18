@@ -12,6 +12,8 @@ import com.bravelittlescientist.android_puzzle_view.PuzzleCompactSurface;
 import de.tavendo.autobahn.WebSocketConnection;
 import de.tavendo.autobahn.WebSocketException;
 import de.tavendo.autobahn.WebSocketHandler;
+import org.codehaus.jackson.JsonFactory;
+import org.codehaus.jackson.map.MappingJsonFactory;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -21,8 +23,8 @@ import java.util.Iterator;
 public class RcatJigsawBotActivity extends Activity {
 
     private PuzzleCompactSurface puzzleSurface;
-
     private RcatJigsawConfig puzzleConfig;
+
     private static final String TAG = RcatJigsawBotActivity.class.getSimpleName();
     private final String wsuri = "ws://10.0.2.2:8888/client";
 
@@ -34,10 +36,12 @@ public class RcatJigsawBotActivity extends Activity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        puzzleConfig = new RcatJigsawConfig();
+
         setContentView(R.layout.puzzle_login);
         startJigsawWebsocketConnection();
 
-        /*puzzleConfig = new RcatJigsawConfig(RcatJigsawBotActivity.this);
+        /*
         Bundle config = ExampleJigsawConfigurations.getRcatKittenExample(R.drawable.diablo_1mb);
 
         puzzleSurface = new PuzzleCompactSurface(this);
@@ -69,10 +73,10 @@ public class RcatJigsawBotActivity extends Activity {
                                 running = true;
                                 activePlayerLoginButton();
 
-                                puzzleConfig.configure(msgContents.getJSONObject("c"));
+                                //puzzleConfig.configure(msgContents.getJSONObject("c"));
 
-                                //jigsawPrototypePieces = new HashMap<String, TextView>();
-                                //drawJigsawPuzzle();
+
+
                             } else {
                                 Log.d(TAG, "Error: No jigsaw configuration received");
                                 Toast.makeText(RcatJigsawBotActivity.this, "No Configuration Found", Toast.LENGTH_LONG).show();
@@ -131,46 +135,6 @@ public class RcatJigsawBotActivity extends Activity {
         } catch (WebSocketException e) {
             Toast.makeText(RcatJigsawBotActivity.this, "FAILURE", Toast.LENGTH_LONG).show();
             Log.d(TAG, e.toString());
-        }
-    }
-
-    public void drawJigsawPuzzle() {
-
-        /*RelativeLayout rL = (RelativeLayout) findViewById(R.id.relative);
-        RelativeLayout.LayoutParams relativeParams = new RelativeLayout.LayoutParams(
-                ViewGroup.LayoutParams.FILL_PARENT,
-                ViewGroup.LayoutParams.FILL_PARENT); */
-
-        JSONObject pieces = puzzleConfig.getPieces();
-        JSONObject board = puzzleConfig.getBoard();
-        JSONObject grid = puzzleConfig.getGrid();
-
-        // Create board + grid for puzzle
-
-
-        // Get Jigsaw Pieces
-        Iterator<?> pIter = pieces.keys();
-        TextView prototypeT;
-        int counter = 1;
-
-        while(pIter.hasNext()) {
-            String pO = (String) pIter.next();
-
-            try {
-                JSONObject piece = (JSONObject) pieces.get(pO);
-                //Toast.makeText(RcatJigsawBotActivity.this, piece.toString(), Toast.LENGTH_SHORT).show();
-                // Get piece information
-                String pieceId = piece.getString("pid");
-                Boolean piecePlaced = piece.getBoolean("b");
-                Integer pieceTargetRow = piece.getInt("r");
-                Integer pieceTargetCol = piece.getInt("c");
-                Integer pieceRemoteXPos = piece.getInt("x");
-                Integer pieceRemoteYPos = piece.getInt("y");
-
-            } catch (JSONException e) {
-               // Toast.makeText(RcatJigsawBotActivity.this, "Failed JSON", Toast.LENGTH_LONG);
-                Log.d(TAG, "JSON Exception parsing pieces");
-            }
         }
     }
 
