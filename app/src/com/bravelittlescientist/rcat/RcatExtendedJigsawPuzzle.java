@@ -12,6 +12,7 @@ public class RcatExtendedJigsawPuzzle extends JigsawPuzzle {
 
     private Integer scaledWidthDimension;
     private Integer scaledHeightDimension;
+    private String[] rcatPieceMapping;
 
     /**
      * RcatExtendedJigsawPuzzle constructor: Bundle configuration
@@ -28,9 +29,8 @@ public class RcatExtendedJigsawPuzzle extends JigsawPuzzle {
         setPuzzleRatio(size.x, size.y);
     }
 
-    /**
-     * Adjustments for mobile screen size
-     */
+    /** Adjustments for mobile screen size **/
+
     public void setPuzzleRatio(int screenW, int screenH) {
         scaledWidthDimension = screenW;
         scaledHeightDimension = screenH;
@@ -43,6 +43,8 @@ public class RcatExtendedJigsawPuzzle extends JigsawPuzzle {
     public int getScaledHeightDimension() {
         return scaledHeightDimension;
     }
+
+    /** Puzzle Piece Loading **/
 
     @Override
     public void loadPuzzleConfiguration() {
@@ -57,10 +59,12 @@ public class RcatExtendedJigsawPuzzle extends JigsawPuzzle {
         puzzlePieceWidth = puzzleXDimension / puzzleGridX;
 
         // Fill Puzzle
+        puzzlePiecesArray = new Bitmap[pieces.size()];
+        pieceLocked = new boolean[pieces.size()];
         puzzlePieceTargetPositions = new int[puzzleGridX][puzzleGridY];
-        puzzlePiecesArray = new Bitmap[puzzleGridX * puzzleGridY];
-        pieceLocked = new boolean[puzzleGridX * puzzleGridY];
+        rcatPieceMapping = new String[pieces.size()];
 
+        // Legacy Puzzle Filling
         int counter = 0;
         for (int w = 0; w < puzzleGridX; w++) {
             for (int h = 0; h < puzzleGridY; h++) {
@@ -75,5 +79,20 @@ public class RcatExtendedJigsawPuzzle extends JigsawPuzzle {
             }
         }
 
+        /*for (String puzzleKey : pieces.keySet()) {
+            // Create mapping between original puzzle management and new one
+            Bundle piece = pieces.getBundle(puzzleKey);
+            int pieceDropX = piece.getInt("c");
+            int pieceDropY = piece.getInt("r");
+            int legacyMapping = puzzlePieceTargetPositions[pieceDropX][pieceDropY];
+            rcatPieceMapping[legacyMapping] = puzzleKey;
+
+            // Update Piece Lockage
+            pieceLocked[legacyMapping] = piece.getBoolean("b");
+        }   */
+    }
+
+    public String[] getLegacyPieceMapping() {
+        return rcatPieceMapping;
     }
 }

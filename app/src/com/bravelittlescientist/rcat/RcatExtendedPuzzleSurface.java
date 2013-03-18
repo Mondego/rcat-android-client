@@ -3,26 +3,28 @@ package com.bravelittlescientist.rcat;
 import android.content.Context;
 import android.graphics.*;
 import android.graphics.drawable.BitmapDrawable;
+import android.os.Bundle;
+import com.bravelittlescientist.android_puzzle_view.JigsawPuzzle;
 import com.bravelittlescientist.android_puzzle_view.PuzzleCompactSurface;
 
 import java.util.Random;
 
 public class RcatExtendedPuzzleSurface extends PuzzleCompactSurface {
 
-    protected RcatExtendedJigsawPuzzle puzzle;
+    //protected RcatExtendedJigsawPuzzle puzzle;
 
     public RcatExtendedPuzzleSurface(Context context) {
         super(context);
     }
 
-    public void setPuzzle(RcatExtendedJigsawPuzzle jigsawPuzzle) {
+    public void setPuzzle(JigsawPuzzle jigsawPuzzle) {
 
         puzzle = jigsawPuzzle;
         Random r = new Random();
 
         if (puzzle.isBackgroundTextureOn()) {
             backgroundImage = new BitmapDrawable(puzzle.getBackgroundTexture());
-            backgroundImage.setBounds(0, 0, puzzle.getScaledWidthDimension(), puzzle.getScaledHeightDimension());
+            backgroundImage.setBounds(0, 0, 800, 480);
         }
         framePaint = new Paint();
         framePaint.setColor(Color.BLACK);
@@ -33,17 +35,21 @@ public class RcatExtendedPuzzleSurface extends PuzzleCompactSurface {
         Bitmap[] originalPieces = puzzle.getPuzzlePiecesArray();
         int[][] positions = puzzle.getPuzzlePieceTargetPositions();
         int[] dimensions = puzzle.getPuzzleDimensions();
+        //String[] rcatMappings = puzzle.getLegacyPieceMapping();
+        //Bundle rcatPieces = puzzle.getConfig().getBundle("pieces");
 
+        // Initialize piece drawable managers
         scaledSurfacePuzzlePieces = new BitmapDrawable[originalPieces.length];
         scaledSurfaceTargetBounds = new Rect[originalPieces.length];
 
+        // Draw pieces onto surface
         for (int i = 0; i < originalPieces.length; i++) {
 
             scaledSurfacePuzzlePieces[i] = new BitmapDrawable(originalPieces[i]);
 
             // Top left is (0,0) in Android canvas
-            int topLeftX = r.nextInt(puzzle.getScaledWidthDimension() - MAX_PUZZLE_PIECE_SIZE);
-            int topLeftY = r.nextInt(puzzle.getScaledHeightDimension() - 2*MAX_PUZZLE_PIECE_SIZE);
+            int topLeftX = r.nextInt(800 - MAX_PUZZLE_PIECE_SIZE);
+            int topLeftY = r.nextInt(480 - 2*MAX_PUZZLE_PIECE_SIZE);
 
             scaledSurfacePuzzlePieces[i].setBounds(topLeftX, topLeftY,
                     topLeftX + MAX_PUZZLE_PIECE_SIZE, topLeftY + MAX_PUZZLE_PIECE_SIZE);
