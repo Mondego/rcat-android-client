@@ -23,11 +23,6 @@
             android:layout_height="wrap_content"
             android:text="@string/loginButtonNotReadyText"
             android:id="@+id/playerLoginbutton" android:enabled="false" android:onClick="onPlayerLogin"/>
-    <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Placeholder"
-            android:id="@+id/placeholder"/>
 
 
 </LinearLayout>

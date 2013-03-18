@@ -7,6 +7,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 
 public class RcatJigsawConfig {
 
@@ -58,21 +59,22 @@ public class RcatJigsawConfig {
             grid.putInt("cellh", c_grid.getInt("cellh"));
 
             // Pieces
-            Bundle p;
-            String key;
-            for (int h = 0; h < grid.getInt("nrows"); h++) {
-                for (int w = 0; w < grid.getInt("ncols"); w++) {
-                    key = "piece_" + String.valueOf(w) + String.valueOf(h);
-                    p = new Bundle();
-                    p.putString("l", "-1");
-                    p.putString("pid", key);
-                    p.putBoolean("b", false);
-                    p.putInt("x", w*(img.getInt("img_w")/grid.getInt("ncols")));
-                    p.putInt("y", h*(img.getInt("img_h")/grid.getInt("nrows")));
-                    p.putInt("r", h);
-                    p.putInt("c", w);
-                    pieces.putBundle(key, p);
-                }
+            JSONObject c_pieces = config.getJSONObject("pieces");
+            Iterator<?> pIter = c_pieces.keys();
+            while (pIter.hasNext()) {
+
+                String nextKey = (String) pIter.next();
+                JSONObject thisPiece = (JSONObject) c_pieces.get(nextKey);
+
+                Bundle p = new Bundle();
+                p.putInt("x", thisPiece.getInt("x"));
+                p.putInt("y", thisPiece.getInt("y"));
+                p.putInt("c", thisPiece.getInt("c"));
+                p.putInt("r", thisPiece.getInt("r"));
+                p.putBoolean("b", thisPiece.getBoolean("b"));
+                p.putString("l", thisPiece.getString("l"));
+
+                pieces.putBundle(nextKey, p);
             }
 
             // TODO: Scores

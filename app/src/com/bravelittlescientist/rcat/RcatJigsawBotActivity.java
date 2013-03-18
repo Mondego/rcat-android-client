@@ -6,7 +6,6 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.View;
 import android.widget.*;
-import com.bravelittlescientist.android_puzzle_view.PuzzleCompactSurface;
 import de.tavendo.autobahn.WebSocketConnection;
 import de.tavendo.autobahn.WebSocketException;
 import de.tavendo.autobahn.WebSocketHandler;
@@ -15,7 +14,7 @@ import org.json.JSONObject;
 
 public class RcatJigsawBotActivity extends Activity {
 
-    private PuzzleCompactSurface puzzleSurface;
+    private RcatExtendedPuzzleSurface puzzleSurface;
     private RcatJigsawConfig puzzleConfig;
 
     private static final String TAG = RcatJigsawBotActivity.class.getSimpleName();
@@ -63,7 +62,7 @@ public class RcatJigsawBotActivity extends Activity {
 
                                 /** Puzzle Surface Configuration **/
                                 puzzleConfig.configure(msgContents.getJSONObject("c"), R.drawable.diablo_1mb);
-                                puzzleSurface = new PuzzleCompactSurface(RcatJigsawBotActivity.this);
+                                puzzleSurface = new RcatExtendedPuzzleSurface(RcatJigsawBotActivity.this);
                                 RcatExtendedJigsawPuzzle jigsawPuzzle = new RcatExtendedJigsawPuzzle(RcatJigsawBotActivity.this, puzzleConfig.getFullConfiguration());
                                 puzzleSurface.setPuzzle(jigsawPuzzle);
 
