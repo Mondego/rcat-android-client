@@ -61,7 +61,11 @@ public class RcatJigsawBotActivity extends Activity {
                                 running = true;
                                 activePlayerLoginButton();
 
+                                /** Puzzle Surface Configuration **/
                                 puzzleConfig.configure(msgContents.getJSONObject("c"), R.drawable.diablo_1mb);
+                                puzzleSurface = new PuzzleCompactSurface(RcatJigsawBotActivity.this);
+                                RcatExtendedJigsawPuzzle jigsawPuzzle = new RcatExtendedJigsawPuzzle(RcatJigsawBotActivity.this, puzzleConfig.getFullConfiguration());
+                                puzzleSurface.setPuzzle(jigsawPuzzle);
 
                             } else {
                                 Log.d(TAG, "Error: No jigsaw configuration received");
@@ -145,10 +149,7 @@ public class RcatJigsawBotActivity extends Activity {
 
                 mConnection.sendTextMessage(userLoginMessage.toString());
 
-                // Now we configure our surface
-                puzzleSurface = new PuzzleCompactSurface(this);
-                RcatExtendedJigsawPuzzle jigsawPuzzle = new RcatExtendedJigsawPuzzle(this, puzzleConfig.getFullConfiguration());
-                puzzleSurface.setPuzzle(jigsawPuzzle);
+                // Now we open our surface
                 setContentView(puzzleSurface);
 
             } catch (JSONException e) {
