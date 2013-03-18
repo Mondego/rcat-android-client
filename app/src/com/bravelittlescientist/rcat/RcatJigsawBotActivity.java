@@ -12,8 +12,6 @@ import com.bravelittlescientist.android_puzzle_view.PuzzleCompactSurface;
 import de.tavendo.autobahn.WebSocketConnection;
 import de.tavendo.autobahn.WebSocketException;
 import de.tavendo.autobahn.WebSocketHandler;
-import org.codehaus.jackson.JsonFactory;
-import org.codehaus.jackson.map.MappingJsonFactory;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -40,13 +38,6 @@ public class RcatJigsawBotActivity extends Activity {
 
         setContentView(R.layout.puzzle_login);
         startJigsawWebsocketConnection();
-
-        /*
-        Bundle config = ExampleJigsawConfigurations.getRcatKittenExample(R.drawable.diablo_1mb);
-
-        puzzleSurface = new PuzzleCompactSurface(this);
-        JigsawPuzzle jigsawPuzzle = new JigsawPuzzle(this, config);
-        puzzleSurface.setPuzzle(jigsawPuzzle);*/
     }
 
     private void startJigsawWebsocketConnection() {
@@ -62,7 +53,8 @@ public class RcatJigsawBotActivity extends Activity {
                 @Override
                 public void onTextMessage(String payload) {
 
-                    Log.d(TAG, "Got echo: " + payload);
+                    Log.d(TAG, "Got message: " + payload);
+
                     // Initial state
                     if (!running) {
                         try {
@@ -70,12 +62,11 @@ public class RcatJigsawBotActivity extends Activity {
 
                             // Configuration Message
                             if (msgContents.has("c")) {
+
                                 running = true;
                                 activePlayerLoginButton();
 
-                                //puzzleConfig.configure(msgContents.getJSONObject("c"));
-
-
+                                puzzleConfig.configure(msgContents.getJSONObject("c"), R.drawable.diablo_1mb);
 
                             } else {
                                 Log.d(TAG, "Error: No jigsaw configuration received");
@@ -84,8 +75,6 @@ public class RcatJigsawBotActivity extends Activity {
                         } catch (Exception e) {
                             Log.d(TAG, e.toString());
                         }
-
-
                         // Game is now running.
                     } else {
                         try {
@@ -160,7 +149,12 @@ public class RcatJigsawBotActivity extends Activity {
                 userLoginMessage.put("usr", playerName);
 
                 mConnection.sendTextMessage(userLoginMessage.toString());
-                //setContentView(puzzleSurface);
+
+                // Now we configure our surface
+                puzzleSurface = new PuzzleCompactSurface(this);
+                JigsawPuzzle jigsawPuzzle = new JigsawPuzzle(this, puzzleConfig.getFullConfiguration());
+                puzzleSurface.setPuzzle(jigsawPuzzle);
+                setContentView(puzzleSurface);
 
             } catch (JSONException e) {
                 Log.d(TAG, "JSON Exception: Sending player login name");

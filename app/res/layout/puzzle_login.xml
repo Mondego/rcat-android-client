@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:id="@+id/scrollView">
+<LinearLayout
               android:orientation="vertical"
               android:layout_width="fill_parent"
               android:layout_height="fill_parent">
@@ -13,10 +17,18 @@
     <EditText
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/player_name_entry_field" android:hint="@string/loginDefaultText"/>
+            android:id="@+id/player_name_entry_field" android:text="mobile"/>
     <Button
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:text="@string/loginButtonNotReadyText"
             android:id="@+id/playerLoginbutton" android:enabled="false" android:onClick="onPlayerLogin"/>
+    <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Placeholder"
+            android:id="@+id/placeholder"/>
+
+
 </LinearLayout>
+</ScrollView>
