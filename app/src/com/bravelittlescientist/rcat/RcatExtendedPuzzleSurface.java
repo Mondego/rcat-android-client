@@ -3,32 +3,26 @@ package com.bravelittlescientist.rcat;
 import android.content.Context;
 import android.graphics.*;
 import android.graphics.drawable.BitmapDrawable;
-import android.view.Display;
-import android.view.WindowManager;
-import com.bravelittlescientist.android_puzzle_view.JigsawPuzzle;
 import com.bravelittlescientist.android_puzzle_view.PuzzleCompactSurface;
 
 import java.util.Random;
 
 public class RcatExtendedPuzzleSurface extends PuzzleCompactSurface {
 
+    protected RcatExtendedJigsawPuzzle puzzle;
+
     public RcatExtendedPuzzleSurface(Context context) {
         super(context);
     }
 
-    @Override
-    public void setPuzzle(JigsawPuzzle jigsawPuzzle) {
-        WindowManager wm = (WindowManager) getContext().getSystemService(Context.WINDOW_SERVICE);
-        Display display = wm.getDefaultDisplay();
-        Point outSize = new Point();
-        display.getSize(outSize);
+    public void setPuzzle(RcatExtendedJigsawPuzzle jigsawPuzzle) {
 
         puzzle = jigsawPuzzle;
         Random r = new Random();
 
         if (puzzle.isBackgroundTextureOn()) {
             backgroundImage = new BitmapDrawable(puzzle.getBackgroundTexture());
-            backgroundImage.setBounds(0, 0, outSize.x, outSize.y);
+            backgroundImage.setBounds(0, 0, puzzle.getScaledWidthDimension(), puzzle.getScaledHeightDimension());
         }
         framePaint = new Paint();
         framePaint.setColor(Color.BLACK);
@@ -48,8 +42,8 @@ public class RcatExtendedPuzzleSurface extends PuzzleCompactSurface {
             scaledSurfacePuzzlePieces[i] = new BitmapDrawable(originalPieces[i]);
 
             // Top left is (0,0) in Android canvas
-            int topLeftX = r.nextInt(outSize.x - MAX_PUZZLE_PIECE_SIZE);
-            int topLeftY = r.nextInt(outSize.y - 2*MAX_PUZZLE_PIECE_SIZE);
+            int topLeftX = r.nextInt(puzzle.getScaledWidthDimension() - MAX_PUZZLE_PIECE_SIZE);
+            int topLeftY = r.nextInt(puzzle.getScaledHeightDimension() - 2*MAX_PUZZLE_PIECE_SIZE);
 
             scaledSurfacePuzzlePieces[i].setBounds(topLeftX, topLeftY,
                     topLeftX + MAX_PUZZLE_PIECE_SIZE, topLeftY + MAX_PUZZLE_PIECE_SIZE);
