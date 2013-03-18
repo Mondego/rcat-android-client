@@ -22,6 +22,9 @@ public class RcatExtendedPuzzleSurface extends PuzzleCompactSurface {
     private Paint controlledPaint;
     private WebSocketConnection mConn;
 
+    private int movingOffsetX = 0;
+    private int movingOffsetY = 0;
+
     public RcatExtendedPuzzleSurface(Context context, WebSocketConnection conn) {
         super(context);
         //MAX_PUZZLE_PIECE_SIZE = 80;
@@ -144,6 +147,9 @@ public class RcatExtendedPuzzleSurface extends PuzzleCompactSurface {
                         onJigsawEventPieceMove(found, place.left, place.top);
                         thisPlayerMoving[found] = true;
                         otherPlayerMoving[found] = false;
+
+                        movingOffsetX = xPos - place.left;
+                        movingOffsetY = yPos - place.top;
                     }
                 }
                 break;
@@ -161,13 +167,17 @@ public class RcatExtendedPuzzleSurface extends PuzzleCompactSurface {
                                 scaledSurfacePuzzlePieces[found].copyBounds().left,
                                 scaledSurfacePuzzlePieces[found].copyBounds().top, true);
                         thisPlayerMoving[found] = false;
+
+                        movingOffsetY = 0;
+                        movingOffsetX = 0;
+
                     } else {
                         Rect rect = scaledSurfacePuzzlePieces[found].copyBounds();
 
-                        rect.left = xPos - MAX_PUZZLE_PIECE_SIZE/2;
-                        rect.top = yPos - MAX_PUZZLE_PIECE_SIZE/2;
-                        rect.right = xPos + MAX_PUZZLE_PIECE_SIZE/2;
-                        rect.bottom = yPos + MAX_PUZZLE_PIECE_SIZE/2;
+                        rect.left = xPos - movingOffsetX;
+                        rect.top = yPos - movingOffsetY;
+                        rect.right = rect.left + MAX_PUZZLE_PIECE_SIZE;
+                        rect.bottom = rect.top + MAX_PUZZLE_PIECE_SIZE;
                         scaledSurfacePuzzlePieces[found].setBounds(rect);
 
                         // Trigger jigsaw piece event
@@ -181,8 +191,18 @@ public class RcatExtendedPuzzleSurface extends PuzzleCompactSurface {
             case MotionEvent.ACTION_UP:
                 // Trigger jigsaw piece event
                 if (found >= 0 && found < scaledSurfacePuzzlePieces.length) {
-                    onJigsawEventPieceDrop(found, xPos, yPos, false);
+                    onJigsawEventPieceDrop(found, xPos - movingOffsetX, yPos - movingOffsetY, false);
                     thisPlayerMoving[found] = false;
+
+                    /*Rect rect = scaledSurfacePuzzlePieces[found].copyBounds();
+                    rect.left = xPos - movingOffsetX;
+                    rect.top = yPos - movingOffsetY;
+                    rect.right = xPos - movingOffsetX + MAX_PUZZLE_PIECE_SIZE;
+                    rect.bottom = yPos - movingOffsetY + MAX_PUZZLE_PIECE_SIZE;
+                    scaledSurfacePuzzlePieces[found].setBounds(rect)*/;
+
+                    movingOffsetY = 0;
+                    movingOffsetX = 0;
                 }
                 found = -1;
                 break;
