@@ -33,17 +33,16 @@ public class RcatJigsawBotActivity extends Activity {
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.puzzle_login);
 
-        puzzleConfig = new RcatJigsawConfig(RcatJigsawBotActivity.this);
+        setContentView(R.layout.puzzle_login);
+        startJigsawWebsocketConnection();
+
+        /*puzzleConfig = new RcatJigsawConfig(RcatJigsawBotActivity.this);
         Bundle config = ExampleJigsawConfigurations.getRcatKittenExample(R.drawable.diablo_1mb);
 
         puzzleSurface = new PuzzleCompactSurface(this);
         JigsawPuzzle jigsawPuzzle = new JigsawPuzzle(this, config);
-        puzzleSurface.setPuzzle(jigsawPuzzle);
-
-
-        startJigsawWebsocketConnection();
+        puzzleSurface.setPuzzle(jigsawPuzzle);*/
     }
 
     private void startJigsawWebsocketConnection() {
@@ -197,7 +196,7 @@ public class RcatJigsawBotActivity extends Activity {
                 userLoginMessage.put("usr", playerName);
 
                 mConnection.sendTextMessage(userLoginMessage.toString());
-                setContentView(puzzleSurface);
+                //setContentView(puzzleSurface);
 
             } catch (JSONException e) {
                 Log.d(TAG, "JSON Exception: Sending player login name");
@@ -212,12 +211,16 @@ public class RcatJigsawBotActivity extends Activity {
     @Override
     protected void onPause() {
         super.onPause();
-        puzzleSurface.getThread().pause();
+        if (puzzleSurface != null) {
+            puzzleSurface.getThread().pause();
+        }
     }
 
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        puzzleSurface.getThread().saveState(outState);
+        if (puzzleSurface != null) {
+            puzzleSurface.getThread().saveState(outState);
+        }
     }
 
 }
