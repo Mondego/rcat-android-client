@@ -52,8 +52,8 @@ public class RcatExtendedPuzzleSurface extends PuzzleCompactSurface {
             scaledSurfacePuzzlePieces[i] = new BitmapDrawable(originalPieces[i]);
 
             // Top left is (0,0) in Android canvas
-            int topLeftX = r.nextInt(jigsawPuzzle.getScaledWidthDimension() - MAX_PUZZLE_PIECE_SIZE);
-            int topLeftY = r.nextInt(jigsawPuzzle.getScaledHeightDimension() - 2*MAX_PUZZLE_PIECE_SIZE);
+            int topLeftX = rcatPieces.getBundle(rcatMappings[i]).getInt("x");
+            int topLeftY = ((Double) (0.8 * rcatPieces.getBundle(rcatMappings[i]).getInt("y"))).intValue();
 
             scaledSurfacePuzzlePieces[i].setBounds(topLeftX, topLeftY,
                     topLeftX + MAX_PUZZLE_PIECE_SIZE, topLeftY + MAX_PUZZLE_PIECE_SIZE);
