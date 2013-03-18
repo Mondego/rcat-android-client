@@ -6,17 +6,12 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.View;
 import android.widget.*;
-import com.bravelittlescientist.android_puzzle_view.ExampleJigsawConfigurations;
-import com.bravelittlescientist.android_puzzle_view.JigsawPuzzle;
 import com.bravelittlescientist.android_puzzle_view.PuzzleCompactSurface;
 import de.tavendo.autobahn.WebSocketConnection;
 import de.tavendo.autobahn.WebSocketException;
 import de.tavendo.autobahn.WebSocketHandler;
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import java.util.HashMap;
-import java.util.Iterator;
 
 public class RcatJigsawBotActivity extends Activity {
 
@@ -152,7 +147,7 @@ public class RcatJigsawBotActivity extends Activity {
 
                 // Now we configure our surface
                 puzzleSurface = new PuzzleCompactSurface(this);
-                JigsawPuzzle jigsawPuzzle = new JigsawPuzzle(this, puzzleConfig.getFullConfiguration());
+                RcatExtendedJigsawPuzzle jigsawPuzzle = new RcatExtendedJigsawPuzzle(this, puzzleConfig.getFullConfiguration());
                 puzzleSurface.setPuzzle(jigsawPuzzle);
                 setContentView(puzzleSurface);
 
