@@ -44,6 +44,38 @@ public class RcatExtendedJigsawPuzzle extends JigsawPuzzle {
         return scaledHeightDimension;
     }
 
+    public int getScaledGridPositionX() {
+        int originalWidth = config.getBundle("board").getInt("w");
+        int toScaleWidth = getScaledWidthDimension();
+        int gridPositionX = config.getBundle("grid").getInt("x");
+
+        if (originalWidth <= toScaleWidth) {
+            return gridPositionX;
+        } else {
+            return (toScaleWidth - getScaledGridWidth())/2;
+        }
+    }
+
+    public int getScaledGridPositionY() {
+        int originalHeight = config.getBundle("board").getInt("h");
+        int toScaleHeight = getScaledHeightDimension();
+        int gridPositionY = config.getBundle("grid").getInt("y");
+
+        if (originalHeight <= toScaleHeight) {
+            return gridPositionY;
+        } else {
+            return (toScaleHeight - getScaledGridHeight())/2;
+        }
+    }
+
+    public int getScaledGridWidth() {
+       return config.getBundle("grid").getInt("ncols") * config.getBundle("grid").getInt("cellw");
+    }
+
+    public int getScaledGridHeight() {
+        return config.getBundle("grid").getInt("nrows") * config.getBundle("grid").getInt("cellh");
+    }
+
     /** Puzzle Piece Loading **/
 
     @Override

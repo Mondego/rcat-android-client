@@ -29,6 +29,12 @@ public class RcatExtendedPuzzleSurface extends PuzzleCompactSurface {
         framePaint.setStyle(Paint.Style.STROKE);
         framePaint.setTextSize(20);
 
+        /** Set Lock Zone **/
+        LOCK_ZONE_LEFT = jigsawPuzzle.getScaledGridPositionX();
+        LOCK_ZONE_TOP = jigsawPuzzle.getScaledGridPositionY();
+        LOCK_ZONE_RIGHT = LOCK_ZONE_LEFT + jigsawPuzzle.getScaledGridWidth();
+        LOCK_ZONE_BOTTOM = LOCK_ZONE_TOP + jigsawPuzzle.getScaledGridHeight();
+
         /** Initialize drawables from puzzle pieces **/
         Bitmap[] originalPieces = puzzle.getPuzzlePiecesArray();
         int[][] positions = puzzle.getPuzzlePieceTargetPositions();
