@@ -136,4 +136,8 @@ public class RcatExtendedJigsawPuzzle extends JigsawPuzzle {
     public Bundle getLegacyPieceMappingInverse() {
         return rcatPieceMappingInverse;
     }
+
+    public Bitmap getPuzzleImageFull () {
+        return puzzleResult;
+    }
 }

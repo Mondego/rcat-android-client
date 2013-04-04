@@ -21,8 +21,11 @@ public class RcatExtendedPuzzleSurface extends PuzzleCompactSurface {
     private Context msgContext;
     private boolean[] otherPlayerMoving;
     private boolean[] thisPlayerMoving;
+
     private Paint lockedPaint;
     private Paint controlledPaint;
+    private BitmapDrawable backgroundHint;
+
     private WebSocketConnection mConn;
 
     private int movingOffsetX = 0;
@@ -75,6 +78,11 @@ public class RcatExtendedPuzzleSurface extends PuzzleCompactSurface {
         LOCK_ZONE_RIGHT = 600;
         LOCK_ZONE_BOTTOM = 450;
 
+        // Set background
+        backgroundHint = new BitmapDrawable(future.getPuzzleImageFull());
+        backgroundHint.setAlpha(72);
+        backgroundHint.setBounds(LOCK_ZONE_LEFT, LOCK_ZONE_TOP, LOCK_ZONE_RIGHT, LOCK_ZONE_BOTTOM);
+
         /** Initialize drawables from puzzle pieces **/
         Bitmap[] originalPieces = puzzle.getPuzzlePiecesArray();
         int[][] positions = puzzle.getPuzzlePieceTargetPositions();
@@ -120,12 +128,17 @@ public class RcatExtendedPuzzleSurface extends PuzzleCompactSurface {
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
 
+        // Draw board background
+        backgroundHint.draw(canvas);
+
+        // Draw locked pieces
         for (int bmd = 0; bmd < scaledSurfacePuzzlePieces.length; bmd++) {
             if (puzzle.isPieceLocked(bmd)) {
                 scaledSurfacePuzzlePieces[bmd].draw(canvas);
             }
         }
 
+        // Draw unlocked pieces
         for (int bmd = 0; bmd < scaledSurfacePuzzlePieces.length; bmd++) {
             if (!puzzle.isPieceLocked(bmd)) {
                 scaledSurfacePuzzlePieces[bmd].draw(canvas);
