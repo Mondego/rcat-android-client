@@ -4,7 +4,10 @@ import android.content.Context;
 import android.graphics.*;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MotionEvent;
+import android.view.SurfaceView;
+import android.view.View;
 import com.bravelittlescientist.android_puzzle_view.PuzzleCompactSurface;
 import de.tavendo.autobahn.WebSocketConnection;
 import org.json.JSONException;
@@ -40,6 +43,15 @@ public class RcatExtendedPuzzleSurface extends PuzzleCompactSurface {
         controlledPaint.setColor(Color.BLUE);
         controlledPaint.setStyle(Paint.Style.STROKE);
         controlledPaint.setStrokeWidth(5);
+
+        setLongClickable(true);
+        setOnLongClickListener(new View.OnLongClickListener() {
+            public boolean onLongClick(View v) {
+                lockedPaint.setColor(Color.GREEN);
+                controlledPaint.setColor(Color.GREEN);
+                return true;
+            }
+        });
     }
 
     public void setPuzzle(RcatExtendedJigsawPuzzle jigsawPuzzle) {
@@ -131,6 +143,8 @@ public class RcatExtendedPuzzleSurface extends PuzzleCompactSurface {
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
+        //super.onTouchEvent(event);
+
         int xPos =(int) event.getX();
         int yPos =(int) event.getY();
 
