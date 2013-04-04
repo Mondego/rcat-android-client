@@ -18,6 +18,7 @@ public class RcatJigsawBotActivity extends Activity {
 
     private RcatExtendedPuzzleSurface puzzleSurface;
     private RcatJigsawConfig puzzleConfig;
+    private RcatNotification puzzleNotifications;
 
     private static final String TAG = RcatJigsawBotActivity.class.getSimpleName();
     private String wsuri = "ws://10.0.2.2:8888/client";
@@ -29,17 +30,8 @@ public class RcatJigsawBotActivity extends Activity {
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        Notification noti = new Notification.Builder(RcatJigsawBotActivity.this)
-                .setContentTitle("New mail from " + "test@gmail.com")
-                .setContentText("Subject")
-                .setSmallIcon(R.drawable.puzzle_icon)
-                .build();
-        NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-        noti.flags |= Notification.FLAG_AUTO_CANCEL;
-        notificationManager.notify(0, noti);
-
         setContentView(R.layout.enter_host_view);
+        puzzleNotifications = new RcatNotification(this);
         puzzleConfig = new RcatJigsawConfig();
     }
 
