@@ -1,6 +1,8 @@
 package com.bravelittlescientist.rcat;
 
 import android.app.Activity;
+import android.app.Notification;
+import android.app.NotificationManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -27,6 +29,16 @@ public class RcatJigsawBotActivity extends Activity {
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        Notification noti = new Notification.Builder(RcatJigsawBotActivity.this)
+                .setContentTitle("New mail from " + "test@gmail.com")
+                .setContentText("Subject")
+                .setSmallIcon(R.drawable.puzzle_icon)
+                .build();
+        NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+        noti.flags |= Notification.FLAG_AUTO_CANCEL;
+        notificationManager.notify(0, noti);
+
         setContentView(R.layout.enter_host_view);
         puzzleConfig = new RcatJigsawConfig();
     }
