@@ -11,6 +11,7 @@ import android.widget.*;
 import de.tavendo.autobahn.WebSocketConnection;
 import de.tavendo.autobahn.WebSocketException;
 import de.tavendo.autobahn.WebSocketHandler;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -88,24 +89,25 @@ public class RcatJigsawBotActivity extends Activity {
                                 puzzleSurface.onDropPieceFromMessage(msgContents.getJSONObject("pd"));
 
                             } else if (msgContents.has("NU")) {
-                                // New user message
-                                //Toast.makeText(RcatJigsawBotActivity.this, msgContents.get("NU").toString(), Toast.LENGTH_SHORT).show();
+                                JSONObject msg = msgContents.getJSONArray("NU").getJSONObject(0);
+                                String uid = msg.getString("uid");
+                                String user = msg.getString("user");
+                                Integer score = msg.getInt("score");
+                                puzzleNotifications.notifyNewUserJoined(uid, user, score);
 
                             } else if (msgContents.has("scu")) {
                                 // Score update message
                                 //Toast.makeText(RcatJigsawBotActivity.this, msgContents.get("scu").toString(), Toast.LENGTH_SHORT).show();
 
                             } else if (msgContents.has("UD")) {
-                                // User left message
-                                //Toast.makeText(RcatJigsawBotActivity.this, msgContents.get("UD").toString(), Toast.LENGTH_SHORT).show();
+                                String ud = msgContents.getString("UD");
+                                puzzleNotifications.notifyUserLeft(ud);
 
                             } else if (msgContents.has("go")) {
-                                // Game over message
-                                //Toast.makeText(RcatJigsawBotActivity.this, msgContents.get("go").toString(), Toast.LENGTH_SHORT).show();
+                                puzzleNotifications.notifyGameOver();
 
                             } else {
-                                Log.d(TAG, "Error: No jigsaw configuration received");
-                                Toast.makeText(RcatJigsawBotActivity.this, "No Configuration Found", Toast.LENGTH_LONG).show();
+                                Log.d(TAG, "Error: No message received");
                             }
 
                         } catch (Exception e) {

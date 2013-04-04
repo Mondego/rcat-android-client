@@ -43,7 +43,7 @@ public class RcatNotification {
      * @param user
      * @param score
      */
-    public void notifyNewUserJoined(String uid, String user, String score) {
+    public void notifyNewUserJoined(String uid, String user, Integer score) {
         Notification notification = new Notification.Builder(notificationContext)
                 .setContentTitle("Player Joined Game")
                 .setContentText(user + " [" + score + " points] joined.")
@@ -58,7 +58,7 @@ public class RcatNotification {
      */
     public void notifyUserLeft(String uid) {
         Notification notification = new Notification.Builder(notificationContext)
-                .setContentTitle("Player Left Game")
+                .setContentTitle("Jigsaw Game")
                 .setContentText("A user has left the game")
                 .setSmallIcon(R.drawable.puzzle_icon)
                 .build();
@@ -97,6 +97,15 @@ public class RcatNotification {
      */
     public void notifyPlayerDroppedPiece(String uid, String pid) {
         // TODO
+    }
+
+    public void notifyInformation(String info) {
+        Notification notification = new Notification.Builder(notificationContext)
+                .setContentTitle("RCAT")
+                .setContentText(info)
+                .setSmallIcon(R.drawable.puzzle_icon)
+                .build();
+        notify(notification);
     }
 
 }
