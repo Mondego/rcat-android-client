@@ -13,7 +13,7 @@
     <EditText
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/enterIPText" android:hint="10.0.2.2"/>
+            android:id="@+id/enterIPText" android:text="10.0.2.2"/>
     <Button
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
