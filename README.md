@@ -1,7 +1,7 @@
 # RCAT Android Client
 
 This is a standalone Android client to for RCAT
-(https://github.com/gentimouton/rcat), a web server for massively
+(https://github.com/Mondego/rcat), a web server for massively
 multi-player online applications.
 
 ## Using rcat-android-client
